@@ -1,6 +1,6 @@
-# UI React component
+# UI components
 
-Mise à disposition de composants UI génériques pour la stack cher-ami. 
+Mise à disposition de composants UI prêt à l'emploi pour la stack cher-ami. 
 
 ## Utilisation
 
