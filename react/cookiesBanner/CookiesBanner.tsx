@@ -203,7 +203,6 @@ export function CookiesBanner(props: IProps) {
    */
   const trackingChoice = (trackingID: string, disableTracking: boolean) => {
     if (props?.trackingType === ETrackingType.GOOGLE_ANALYTICS) {
-      console.log('disable', trackingID);
       window[`ga-disable-${trackingID}`] = disableTracking;
     }
   };
