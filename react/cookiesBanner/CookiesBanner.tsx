@@ -19,8 +19,8 @@ interface IProps {
   // type of tracking
   trackingType?: ETrackingType;
 
-  // ex: "56134123-3" for analytics
-  // ou "GTM-XXXX" for tag manager
+  // ex: "UA-XXXXXXXX-X" for analytics
+  // ou "GTM-XXXXXXXXXX" for tag manager
   trackingID: string;
 
   // texts
@@ -35,7 +35,7 @@ CookiesBanner.defaultProps = {
   showTrigger: false,
   noticeText: `Nous aimerions utiliser des cookies pour réaliser des statistiques de visites. Vous pouvez gérer ou retirer votre consentement à tout moment.`,
   moreText: `Pour plus d’informations sur l’utilisation des cookies, consultez notre politique des cookies`,
-  moreLink: '#',
+  moreLink: 'www.google.fr',
   labelButtonAccept: 'oui',
   labelButtonRefuse: 'non',
   trackingType: ETrackingType.GOOGLE_ANALYTICS
@@ -43,14 +43,14 @@ CookiesBanner.defaultProps = {
 
 /**
  * Cookies Banner
- * This component allow to users to enable or disable tracking.
+ * This component allow to users to enable or disable google analytics tracking.
  * This component is build in order to be customized as much as possible.
  *
  * 1. Change default texts entries
  * 2. Set tracking ID of your Google Analytics
  * 3. Modifie CSS (Less) properties in "CookiesBanner.less" file.
  */
-// class component name
+  // class component name
 const component: string = `CookiesBanner`;
 export function CookiesBanner(props: IProps) {
   // target root
@@ -109,6 +109,7 @@ export function CookiesBanner(props: IProps) {
       // add scripts at the body tag end.
       document.head.append(gTagManagerScript);
       document.body.prepend(gTagManagerNoScript);
+      trackingChoice(trackingID, false);
 
       // remove script tag if exist
     } else {
@@ -123,6 +124,7 @@ export function CookiesBanner(props: IProps) {
 
       debug('remove script tags from DOM.');
       scriptsToRemove?.forEach(el => el?.remove());
+      trackingChoice(trackingID, true);
     }
   };
 
@@ -142,7 +144,7 @@ export function CookiesBanner(props: IProps) {
     // keep it async
     gaScript.async = true;
     // set it an URL
-    gaScript.src = `https://www.googletagmanager.com/gtag/js?id=UA-${trackingID}`;
+    gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${trackingID}`;
     // add ID
     gaScript.setAttribute('id', '__ga');
 
@@ -154,7 +156,7 @@ export function CookiesBanner(props: IProps) {
       `window.dataLayer = window.dataLayer || [];`,
       `function gtag(){dataLayer.push(arguments);}`,
       `gtag('js', new Date());`,
-      `gtag('config', 'UA-${trackingID}');`
+      `gtag('config', '${trackingID}');`
     ].join('\n');
     // add ID
     trackingScript.setAttribute('id', '__tracking');
@@ -175,6 +177,7 @@ export function CookiesBanner(props: IProps) {
       // add scripts at the body tag end.
       document.body.append(gaScript);
       document.body.append(trackingScript);
+      trackingChoice(trackingID, false);
 
       // remove script tag if exist
     } else {
@@ -189,6 +192,19 @@ export function CookiesBanner(props: IProps) {
 
       debug('remove script tags from DOM.');
       scriptsToRemove?.forEach(el => el?.remove());
+      trackingChoice(trackingID, true);
+    }
+  };
+
+  /**
+   * https://developers.google.com/analytics/devguides/collection/analyticsjs/user-opt-out
+   * @param trackingID
+   * @param disableTracking
+   */
+  const trackingChoice = (trackingID: string, disableTracking: boolean) => {
+    if (props?.trackingType === ETrackingType.GOOGLE_ANALYTICS) {
+      console.log('disable', trackingID);
+      window[`ga-disable-${trackingID}`] = disableTracking;
     }
   };
 
@@ -205,7 +221,7 @@ export function CookiesBanner(props: IProps) {
     }
   };
 
-  // --------------------------------------------------------------------------- LOCALSTORAGE
+  // --------------------------------------------------------------------------- LOCAL STORAGE
 
   // This is the key value who store the choice
   const localStorageKey = 'enable-tracking';
@@ -262,7 +278,7 @@ export function CookiesBanner(props: IProps) {
    * On update
    * re-show this component if props showTrigger change
    */
-  // Create a ref about initial mount
+        // Create a ref about initial mount
   const initialMount = useRef(true);
   useEffect(() => {
     // if it's first mount
@@ -300,18 +316,26 @@ export function CookiesBanner(props: IProps) {
     }
   }, []);
 
+  // ------------------------------------------------------------------------- MOUSE
+
+  const mouseHandler = (pHover: boolean) => {
+
+  };
+
   // ------------------------------------------------------------------------- RENDERING
 
   return (
     <div
       className={[component, ...(props.classNames || [])]
-        .filter(v => v)
-        .join(' ')}
+      .filter(v => v)
+      .join(' ')}
       ref={rootRef}
+      onMouseEnter={() => mouseHandler(true)}
+      onMouseLeave={() => mouseHandler(false)}
     >
       <div className={`${component}_wrapper`}>
         {/* Texts content */}
-        <p className={`${component}_texts`}>{props?.noticeText}</p>
+        <p className={`${component}_texts`}>{props?.noticeText}<a href={props.moreLink} target={"_blank"}>{props.moreText}</a></p>
 
         {/* Buttons content */}
         <div className={`${component}_buttons`}>
