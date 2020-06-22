@@ -315,11 +315,6 @@ export function CookiesBanner(props: IProps) {
     }
   }, []);
 
-  // ------------------------------------------------------------------------- MOUSE
-
-  const mouseHandler = (pHover: boolean) => {
-
-  };
 
   // ------------------------------------------------------------------------- RENDERING
 
@@ -329,8 +324,6 @@ export function CookiesBanner(props: IProps) {
       .filter(v => v)
       .join(' ')}
       ref={rootRef}
-      onMouseEnter={() => mouseHandler(true)}
-      onMouseLeave={() => mouseHandler(false)}
     >
       <div className={`${component}_wrapper`}>
         {/* Texts content */}
