@@ -21,7 +21,7 @@ const App = () => {
 };
 ```
 
-Change the style as needed in [Slider.less](slider/Slider.module.less)
+Change the style as needed in [Slider.module.less](slider/Slider.module.less)
 
 **important**:
 
