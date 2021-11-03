@@ -1,12 +1,18 @@
 # UI components
 
-Mise à disposition de composants UI prêt à l'emploi pour la stack cher-ami. 
+[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 
-## Utilisation
+Reusable UI components for cher-ami projects.
 
-Les composants ne sont pas compilés, il suffit donc de les copiers dans le projets qui nécessite leur utilisation
-et les modifier en fonction des besoins.
+## components
 
-## Crédits 
+- [react cookies-banner](packages/react/cookies-banner)
+
+## How to use?
+
+Component collection isn't published on npm and not compiled.
+To use it, you have to copy/past the camelcase selected component folder in your cher-ami project.
+
+## Credits
 
 © cher-ami

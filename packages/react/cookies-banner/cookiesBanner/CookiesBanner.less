@@ -1,0 +1,101 @@
+@COMPONENT: CookiesBanner;
+.CookiesBanner {
+  // --------------------------------------------------------------------------- CONFIG
+
+  /**
+	* Change what you need here
+	*/
+  @backgroundColor: blue;
+  @textColor: #ffffff;
+  @linkColor: #ffffff;
+  @fontSize: 0.8rem;
+
+  .mainFont() {
+    font-family: Helvetica, Arial, sans-serif;
+  }
+
+  .transition () {
+    transition: 300ms ease-in-out;
+    transition-property: transform, opacity;
+  }
+
+  // --------------------------------------------------------------------------- BLOCK
+
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: auto;
+
+  background-color: @backgroundColor;
+  color: @textColor;
+  .mainFont();
+  font-size: @fontSize;
+
+  // transition
+  transform: translateY(100%);
+  .transition();
+
+  // --------------------------------------------------------------------------- ELEMENTS
+
+  &_wrapper {
+    padding: 1.5rem;
+    margin: 0 auto;
+    max-width: 1000px;
+    @media (min-width: 768px) {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  &_texts {
+    margin: 0;
+  }
+
+  &_more {
+    color: @linkColor;
+    margin-left: 0.2rem;
+  }
+
+  &_buttons {
+    margin: 1rem auto 0;
+    @media (min-width: 768px) {
+      margin: 0 auto 0 1rem;
+      display: flex;
+    }
+  }
+
+  &_button {
+    padding: 0.5rem 1rem;
+    border: 1px solid @textColor;
+    background: none;
+    color: inherit;
+    font: inherit;
+    line-height: normal;
+    overflow: visible;
+    appearance: none;
+    outline: none;
+
+    &:not(:first-child) {
+      margin-left: 1rem;
+    }
+
+    &:hover {
+      background: @textColor;
+      color: @backgroundColor;
+    }
+  }
+
+  // --------------------------------------------------------------------------- MODIFIERS
+
+  &-show {
+    transform: translateY(0);
+    opacity: 1;
+    .transition();
+  }
+
+  // --------------------------------------------------------------------------- CHILDREN
+
+  // --------------------------------------------------------------------------- PSEUDOS
+
+  // --------------------------------------------------------------------------- PATCHES
+}

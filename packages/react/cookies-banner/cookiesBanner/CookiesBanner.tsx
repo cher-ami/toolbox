@@ -1,12 +1,13 @@
-import './CookiesBanner.less';
-import React, {useEffect, useRef} from 'react';
-const debug = require('debug')('front:CookiesBanner');
+import "./CookiesBanner.less";
+import React, { useEffect, useRef } from "react";
+import debug from "@wbe/debug";
+const log = debug("front:CookiesBanner");
 
 // ----------------------------------------------------------------------------- STRUCT
 
 export enum ETrackingType {
   GOOGLE_ANALYTICS,
-  GOOGLE_TAG_MANAGER
+  GOOGLE_TAG_MANAGER,
 }
 
 interface IProps {
@@ -29,16 +30,19 @@ interface IProps {
   moreLink?: string;
   labelButtonAccept?: string;
   labelButtonRefuse?: string;
+
+  // dispatch on click button
+  dispatchButtonClick?: (pEnableTrackingValue: boolean) => void;
 }
 
 CookiesBanner.defaultProps = {
   showTrigger: false,
   noticeText: `Nous aimerions utiliser des cookies pour réaliser des statistiques de visites. Vous pouvez gérer ou retirer votre consentement à tout moment.`,
   moreText: `Pour plus d’informations sur l’utilisation des cookies, consultez notre politique des cookies`,
-  moreLink: 'www.google.fr',
-  labelButtonAccept: 'oui',
-  labelButtonRefuse: 'non',
-  trackingType: ETrackingType.GOOGLE_ANALYTICS
+  moreLink: "www.google.fr",
+  labelButtonAccept: "oui",
+  labelButtonRefuse: "non",
+  trackingType: ETrackingType.GOOGLE_ANALYTICS,
 };
 
 /**
@@ -50,7 +54,7 @@ CookiesBanner.defaultProps = {
  * 2. Set tracking ID of your Google Analytics
  * 3. Modifie CSS (Less) properties in "CookiesBanner.less" file.
  */
-  // class component name
+// class component name
 const component: string = `CookiesBanner`;
 export function CookiesBanner(props: IProps) {
   // target root
@@ -67,7 +71,7 @@ export function CookiesBanner(props: IProps) {
     trackingID: string = props?.trackingID
   ) => {
     // create New google manager script
-    const gTagManagerScript = document.createElement('script');
+    const gTagManagerScript = document.createElement("script");
 
     // inject code in tracking script tag.
     gTagManagerScript.innerHTML = `
@@ -79,33 +83,33 @@ export function CookiesBanner(props: IProps) {
     `;
 
     // add ID
-    gTagManagerScript.setAttribute('id', '__gaTagManagerScript');
+    gTagManagerScript.setAttribute("id", "__gaTagManagerScript");
 
-    const gTagManagerNoScript = document.createElement('noscript');
-    const gTagManagerNoScriptIFrame = document.createElement('iframe');
+    const gTagManagerNoScript = document.createElement("noscript");
+    const gTagManagerNoScriptIFrame = document.createElement("iframe");
     gTagManagerNoScriptIFrame.src = `https://www.googletagmanager.com/ns.html?id=${trackingID}`;
-    gTagManagerNoScriptIFrame.style.height = '0';
-    gTagManagerNoScriptIFrame.style.width = '0';
-    gTagManagerNoScriptIFrame.style.display = 'none';
-    gTagManagerNoScriptIFrame.style.visibility = 'hidden';
+    gTagManagerNoScriptIFrame.style.height = "0";
+    gTagManagerNoScriptIFrame.style.width = "0";
+    gTagManagerNoScriptIFrame.style.display = "none";
+    gTagManagerNoScriptIFrame.style.visibility = "hidden";
 
     gTagManagerNoScript.append(gTagManagerNoScriptIFrame);
-    gTagManagerNoScript.setAttribute('id', '__gaTagManagerNoScript');
+    gTagManagerNoScript.setAttribute("id", "__gaTagManagerNoScript");
 
-    const $gTagManagerScript = document.getElementById('__gaTagManagerScript');
+    const $gTagManagerScript = document.getElementById("__gaTagManagerScript");
     const $gTagManagerNoScript = document.getElementById(
-      '__gaTagManagerNoScript'
+      "__gaTagManagerNoScript"
     );
 
     // if injection script tags is enable
     if (injectScriptTags) {
       if ($gTagManagerScript || $gTagManagerNoScript) {
         debug(
-          '$gTagManagerNoScript or $gTagManagerNoScript already exist in DOM, NOT create new scripts. return. '
+          "$gTagManagerNoScript or $gTagManagerNoScript already exist in DOM, NOT create new scripts. return. "
         );
         return;
       }
-      debug('ADD script tags to DOM.');
+      debug("ADD script tags to DOM.");
       // add scripts at the body tag end.
       document.head.append(gTagManagerScript);
       document.body.prepend(gTagManagerNoScript);
@@ -119,11 +123,11 @@ export function CookiesBanner(props: IProps) {
         // auto generated when script is injected in DOM, we remove it too.
         document.querySelector(
           'script[src$="https://www.google-analytics.com/analytics.js"]'
-        )
+        ),
       ];
 
-      debug('remove script tags from DOM.');
-      scriptsToRemove?.forEach(el => el?.remove());
+      debug("remove script tags from DOM.");
+      scriptsToRemove?.forEach((el) => el?.remove());
       trackingChoice(trackingID, true);
     }
   };
@@ -140,40 +144,40 @@ export function CookiesBanner(props: IProps) {
     if (!trackingID) return;
 
     // create New google manager script
-    const gaScript = document.createElement('script');
+    const gaScript = document.createElement("script");
     // keep it async
     gaScript.async = true;
     // set it an URL
     gaScript.src = `https://www.googletagmanager.com/gtag/js?id=${trackingID}`;
     // add ID
-    gaScript.setAttribute('id', '__ga');
+    gaScript.setAttribute("id", "__ga");
 
     // create new tracking script
-    const trackingScript = document.createElement('script');
+    const trackingScript = document.createElement("script");
 
     // inject code in tracking script tag.
     trackingScript.innerHTML = [
       `window.dataLayer = window.dataLayer || [];`,
       `function gtag(){dataLayer.push(arguments);}`,
       `gtag('js', new Date());`,
-      `gtag('config', '${trackingID}');`
-    ].join('\n');
+      `gtag('config', '${trackingID}');`,
+    ].join("\n");
     // add ID
-    trackingScript.setAttribute('id', '__tracking');
+    trackingScript.setAttribute("id", "__tracking");
 
     // get dom script tags
-    const $ga = document.getElementById('__ga');
-    const $tracking = document.getElementById('__tracking');
+    const $ga = document.getElementById("__ga");
+    const $tracking = document.getElementById("__tracking");
 
     // if injection script tags is enable
     if (injectScriptTags) {
       if ($ga || $tracking) {
         debug(
-          '$ga or $tracking already exist in DOM, NOT create new scripts. return. '
+          "$ga or $tracking already exist in DOM, NOT create new scripts. return. "
         );
         return;
       }
-      debug('ADD script tags to DOM.');
+      debug("ADD script tags to DOM.");
       // add scripts at the body tag end.
       document.body.append(gaScript);
       document.body.append(trackingScript);
@@ -187,11 +191,11 @@ export function CookiesBanner(props: IProps) {
         // auto generated when script is injected in DOM, we remove it too.
         document.querySelector(
           'script[src$="https://www.google-analytics.com/analytics.js"]'
-        )
+        ),
       ];
 
-      debug('remove script tags from DOM.');
-      scriptsToRemove?.forEach(el => el?.remove());
+      debug("remove script tags from DOM.");
+      scriptsToRemove?.forEach((el) => el?.remove());
       trackingChoice(trackingID, true);
     }
   };
@@ -223,7 +227,7 @@ export function CookiesBanner(props: IProps) {
   // --------------------------------------------------------------------------- LOCAL STORAGE
 
   // This is the key value who store the choice
-  const localStorageKey = 'enable-tracking';
+  const localStorageKey = "enable-tracking";
 
   /**
    * Check if a choice as been already made
@@ -251,13 +255,15 @@ export function CookiesBanner(props: IProps) {
    * @param {boolean} pEnableTracking, no tracking by default
    */
   const buttonsClickHandler = (pEnableTracking: boolean = false) => {
-    debug('buttonsClickHandler > pEnableTracking', pEnableTracking);
+    log("buttonsClickHandler > pEnableTracking", pEnableTracking);
     // set variable in window object
     scriptsInjection(pEnableTracking);
     // store choice in localStorage
     setLocalStorageValue(pEnableTracking);
     // hide component
     componentAnim(false);
+
+    props.dispatchButtonClick?.(pEnableTracking);
   };
 
   // ------------------------------------------------------------------------- MANAGE TRANSITION
@@ -277,7 +283,7 @@ export function CookiesBanner(props: IProps) {
    * On update
    * re-show this component if props showTrigger change
    */
-        // Create a ref about initial mount
+  // Create a ref about initial mount
   const initialMount = useRef(true);
   useEffect(() => {
     // if it's first mount
@@ -297,17 +303,17 @@ export function CookiesBanner(props: IProps) {
   useEffect(() => {
     // if choice exist in local storage
     if (localStorageChoiceExist()) {
-      debug('init > localStorageChoiceExist() ', localStorageChoiceExist());
-      debug('init > getLocalStorageValue() ', getLocalStorageValue());
+      log("init > localStorageChoiceExist() ", localStorageChoiceExist());
+      log("init > getLocalStorageValue() ", getLocalStorageValue());
 
       // localstorage value is a string, we need to check it
-      const localStorageValueIsTrue = getLocalStorageValue() === 'true';
-      debug('init > localStorageValueIsTrue', localStorageValueIsTrue);
+      const localStorageValueIsTrue = getLocalStorageValue() === "true";
+      log("init > localStorageValueIsTrue", localStorageValueIsTrue);
       // inject or remove google analytics from DOM
       scriptsInjection(localStorageValueIsTrue);
     } else {
-      debug(
-        'init > localStorageChoiceExist() doesnt exist, anim show component',
+      log(
+        "init > localStorageChoiceExist() doesnt exist, anim show component",
         localStorageChoiceExist()
       );
       // add show class
@@ -315,19 +321,23 @@ export function CookiesBanner(props: IProps) {
     }
   }, []);
 
-
   // ------------------------------------------------------------------------- RENDERING
 
   return (
     <div
       className={[component, ...(props.classNames || [])]
-      .filter(v => v)
-      .join(' ')}
+        .filter((v) => v)
+        .join(" ")}
       ref={rootRef}
     >
       <div className={`${component}_wrapper`}>
         {/* Texts content */}
-        <p className={`${component}_texts`}>{props?.noticeText}<a href={props.moreLink} target={"_blank"}>{props.moreText}</a></p>
+        <p className={`${component}_texts`}>
+          {props?.noticeText}
+          <a href={props.moreLink} target={"_blank"}>
+            {props.moreText}
+          </a>
+        </p>
 
         {/* Buttons content */}
         <div className={`${component}_buttons`}>

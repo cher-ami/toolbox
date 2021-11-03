@@ -1,0 +1,15 @@
+{
+  "name": "cookies-banner",
+  "version": "1.0.0",
+  "description": "react cookies banner component",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "author": "cher-ami",
+  "license": "ISC",
+  "dependencies": {
+    "@wbe/debug": "^1.0.0"
+  }
+}
