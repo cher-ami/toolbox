@@ -1,0 +1,17 @@
+{
+  "name": "slider",
+  "version": "1.0.0",
+  "description": "react slider",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "author": "cher-ami",
+  "license": "ISC",
+  "dependencies": {
+    "@wbe/use-window-size": "^2.4.0",
+    "gsap": "^3.8.0",
+    "react-use-gesture": "^9.1.3"
+  }
+}

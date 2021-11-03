@@ -6,7 +6,10 @@ Reusable UI components for cher-ami projects.
 
 ## components
 
-- [react cookies-banner](packages/react/cookies-banner)
+### react
+
+- [cookies-banner](packages/react/cookies-banner)
+- [slider](packages/react/slider)
 
 ## How to use?
 
