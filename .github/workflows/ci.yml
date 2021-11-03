@@ -7,11 +7,6 @@ jobs:
       matrix:
         node-version: [14.x]
     steps:
-      - uses: actions/checkout@v2
-      - run: node -v
+      - name: action-lerna
+        uses: m19c/action-lerna@1.0.0
 
-      - name: 🌎 install dependencies
-        run: npm i && lerna bootstrap
-
-      - name: 🙏🏽 test
-        run: lerna run test
