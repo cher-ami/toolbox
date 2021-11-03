@@ -1,6 +1,6 @@
 # React marquee
 
-A Marquee component animated and controlled by css variables.
+A Marquee component animated and controlled by css variables. This component development start from a fork of [react-fast-marquee](https://github.com/justin-chu/react-fast-marquee)
 
 ## Usage
 
