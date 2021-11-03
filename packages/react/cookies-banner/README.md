@@ -1,6 +1,8 @@
 # React cookies banner
 
 Display cookies banner and enable/disable tracking with google analytics or google tag manager.
+When the consent button is clicked, a localstorage "enable-tracking" is set.
+On page reload, the components will no longer be displayed.
 
 ## Usage
 
