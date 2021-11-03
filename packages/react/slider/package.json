@@ -1,7 +1,7 @@
 {
-  "name": "cookies-banner",
+  "name": "slider",
   "version": "1.0.0",
-  "description": "react cookies banner component",
+  "description": "react slider",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

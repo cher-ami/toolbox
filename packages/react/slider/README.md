@@ -1,6 +1,6 @@
 # React slider
 
-A simple React slider.
+A simple React slider. It move only on drag gesture with min/max limit.
 
 ## Usage
 
@@ -45,13 +45,13 @@ Cookies Banner uses:
 
 ## Example
 
-Install dependencies from root
+Install dependencies from root:
 
 ```shell
 npm i & lerna bootstrap
 ```
 
-Start dev server from this package
+Start dev server from this package:
 
 ```shell
 npm run dev
