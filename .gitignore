@@ -1,6 +1,7 @@
 .idea
 node_modules
 dist
+packages/**/**/_example/dist
 tsconfig.tsbuildinfo
 tsconfig-build.tsbuildinfo
 out*

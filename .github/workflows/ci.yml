@@ -1,0 +1,17 @@
+name: CI
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+    steps:
+      - uses: actions/checkout@v2
+      - run: node -v
+
+      - name: 🌎 install dependencies
+        run: npm ci
+
+      - name: 🙏🏽 build
+        run: lerna run build
