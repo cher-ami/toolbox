@@ -4,7 +4,7 @@ Display cookies banner and enable/disable tracking with google analytics or goog
 
 ## Usage
 
-Import the component in yout React project:
+Copy / past the component folder in your React project:
 
 ```tsx
 import { CookiesBanner } from "./CookiesBanner";
@@ -34,12 +34,12 @@ Cookies Banner uses:
 | trackingType        | `ETrackingType`                          | GOOGLE_ANALYTICS or GOOGLE_TAG_MANAGER                                | GOOGLE_ANALYTICS                    | true     |
 | show                | `boolean`                                | show the component (usefull to select new consent choise)             | true (depend of localStorage value) | true     |
 | dispatchButtonClick | `(pEnableTrackingValue: boolean)=> void` | callback when button is clicked                                       | /                                   | true     |
-| noticeText          | `string`                                 |                                                                       |                                     | true     |
-| moreText            | `string`                                 |                                                                       |                                     | true     |
-| moreLink            | `string`                                 |                                                                       |                                     | true     |
-| labelButtonAccept   | `string`                                 |                                                                       |                                     | true     |
-| labelButtonRefuse   | `string`                                 |                                                                       |                                     | true     |
-| className           | `string`                                 |                                                                       | /                                   | true     |
+| noticeText          | `string`                                 | (check default props)                                                 | /                                   | true     |
+| moreText            | `string`                                 | (check default props)                                                 | /                                   | true     |
+| moreLink            | `string`                                 | (check default props)                                                 | /                                   | true     |
+| labelButtonAccept   | `string`                                 | (check default props)                                                 | /                                   | true     |
+| labelButtonRefuse   | `string`                                 | (check default props)                                                 | /                                   | true     |
+| className           | `string`                                 | (check default props)                                                 | /                                   | true     |
 
 ## Example
 
