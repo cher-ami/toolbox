@@ -1,0 +1,30 @@
+// @import (reference) "../../references.less";
+
+.root {
+  cursor: grabbing;
+  overflow: hidden;
+  width: 100%;
+}
+
+.wrapper {
+  overflow: hidden;
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+
+  // prevent vertical scrolling when touch
+  touch-action: pan-y;
+  cursor: grab;
+  &:active {
+    cursor: grabbing;
+  }
+
+  & > * {
+    position: relative;
+    display: block;
+    user-select: none;
+  }
+}
