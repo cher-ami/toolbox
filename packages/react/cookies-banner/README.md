@@ -2,19 +2,25 @@
 
 Display cookies banner and enable/disable tracking with google analytics or google tag manager.
 
-## Example
+## Usage
 
-Install dependencies from root
+```tsx
+import { CookiesBanner } from "./CookiesBanner";
 
-```shell
-npm i & lerna bootstrap
+const App = () => {
+  return (
+    <div>
+      <CookiesBanner trackingID={"..."} />
+    </div>
+  );
+};
 ```
 
-Start dev server from this package
+## Dependencies
 
-```shell
-npm run dev
-```
+Cookies Banner uses:
+
+- [@wbe/debug](https://github.com/willybrauner/debug)
 
 ## props
 
@@ -30,3 +36,17 @@ npm run dev
 | labelButtonAccept   | `string`                                 |                                                                       |                                     | true     |
 | labelButtonRefuse   | `string`                                 |                                                                       |                                     | true     |
 | className           | `string`                                 |                                                                       | /                                   | true     |
+
+## Example
+
+Install dependencies from root
+
+```shell
+npm i & lerna bootstrap
+```
+
+Start dev server from this package
+
+```shell
+npm run dev
+```
