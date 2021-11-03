@@ -8,5 +8,5 @@
     "serve": "vite preview"
   },
   "author": "cher-ami",
-  "license": "ISC"
+  "license": "MIT"
 }

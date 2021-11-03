@@ -8,7 +8,7 @@
     "serve": "vite preview"
   },
   "author": "cher-ami",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@wbe/use-window-size": "^2.4.0",
     "gsap": "^3.8.0",

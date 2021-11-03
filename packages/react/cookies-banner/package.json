@@ -8,7 +8,7 @@
     "serve": "vite preview"
   },
   "author": "cher-ami",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@wbe/debug": "^1.0.0"
   }

@@ -20,3 +20,7 @@ To use it, you have to copy/past the camelcase selected component folder in your
 ## Credits
 
 © cher-ami
+
+## Licence
+
+[MIT](LICENSE)
