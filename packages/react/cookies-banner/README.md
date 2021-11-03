@@ -4,6 +4,8 @@ Display cookies banner and enable/disable tracking with google analytics or goog
 
 ## Usage
 
+Import the component in yout React project:
+
 ```tsx
 import { CookiesBanner } from "./CookiesBanner";
 
@@ -15,6 +17,8 @@ const App = () => {
   );
 };
 ```
+
+Change the style as needed in [CookiesBanner.less](cookiesBanner/CookiesBanner.less)
 
 ## Dependencies
 
