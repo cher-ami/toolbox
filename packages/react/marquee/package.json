@@ -1,7 +1,7 @@
 {
-  "name": "slider",
+  "name": "marquee",
   "version": "1.0.0",
-  "description": "react slider",
+  "description": "react marquee component",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
