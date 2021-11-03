@@ -15,10 +15,6 @@ const App = () => {
       <Marquee>
         <span>{"text"}</span>
       </Marquee>
-
-      <Marquee cloneChild={false}>
-        <span>{"text"}</span>
-      </Marquee>
     </div>
   );
 };
