@@ -13,5 +13,5 @@ jobs:
       - name: 🌎 install dependencies
         run: npm i && lerna bootstrap
 
-      - name: 🙏🏽 build
-        run: lerna run build
+      - name: 🙏🏽 test
+        run: lerna run test
