@@ -1,7 +1,10 @@
 import "./CookiesBanner.less";
 import React, { useEffect, useRef } from "react";
 import debug from "@wbe/debug";
-const log = debug("front:CookiesBanner");
+
+// class component name
+const componentName: string = `CookiesBanner`;
+const log = debug(`front:${componentName}`);
 
 // ----------------------------------------------------------------------------- STRUCT
 
@@ -12,10 +15,10 @@ export enum ETrackingType {
 
 interface IProps {
   // class element
-  classNames?: string[];
+  className?: string;
 
   // show cookie banner even if choice as been already made
-  showTrigger?: boolean;
+  show?: boolean;
 
   // type of tracking
   trackingType?: ETrackingType;
@@ -36,7 +39,7 @@ interface IProps {
 }
 
 CookiesBanner.defaultProps = {
-  showTrigger: false,
+  show: false,
   noticeText: `Nous aimerions utiliser des cookies pour réaliser des statistiques de visites. Vous pouvez gérer ou retirer votre consentement à tout moment.`,
   moreText: `Pour plus d’informations sur l’utilisation des cookies, consultez notre politique des cookies`,
   moreLink: "www.google.fr",
@@ -54,8 +57,6 @@ CookiesBanner.defaultProps = {
  * 2. Set tracking ID of your Google Analytics
  * 3. Modifie CSS (Less) properties in "CookiesBanner.less" file.
  */
-// class component name
-const component: string = `CookiesBanner`;
 export function CookiesBanner(props: IProps) {
   // target root
   const rootRef = useRef(null);
@@ -274,14 +275,14 @@ export function CookiesBanner(props: IProps) {
   const componentAnim = (
     show: boolean = true,
     el = rootRef?.current as HTMLElement,
-    modifier = `${component}-show`
+    modifier = `${componentName}-show`
   ): void => {
     show ? el?.classList?.add(modifier) : el?.classList?.remove(modifier);
   };
 
   /**
    * On update
-   * re-show this component if props showTrigger change
+   * re-show this component if props show change
    */
   // Create a ref about initial mount
   const initialMount = useRef(true);
@@ -293,7 +294,7 @@ export function CookiesBanner(props: IProps) {
       // toggle show class
       componentAnim(true);
     }
-  }, [props.showTrigger]);
+  }, [props.show]);
 
   /**
    * Init
@@ -325,14 +326,12 @@ export function CookiesBanner(props: IProps) {
 
   return (
     <div
-      className={[component, ...(props.classNames || [])]
-        .filter((v) => v)
-        .join(" ")}
+      className={[componentName, props.className].filter((v) => v).join(" ")}
       ref={rootRef}
     >
-      <div className={`${component}_wrapper`}>
+      <div className={`${componentName}_wrapper`}>
         {/* Texts content */}
-        <p className={`${component}_texts`}>
+        <p className={`${componentName}_texts`}>
           {props?.noticeText}
           <a href={props.moreLink} target={"_blank"}>
             {props.moreText}
@@ -340,11 +339,11 @@ export function CookiesBanner(props: IProps) {
         </p>
 
         {/* Buttons content */}
-        <div className={`${component}_buttons`}>
+        <div className={`${componentName}_buttons`}>
           {props?.labelButtonAccept && (
             <button
               aria-label="accept"
-              className={`${component}_button ${component}_button-accept`}
+              className={`${componentName}_button ${componentName}_button-accept`}
               children={props.labelButtonAccept}
               onClick={() => buttonsClickHandler(true)}
             />
@@ -352,7 +351,7 @@ export function CookiesBanner(props: IProps) {
           {props?.labelButtonRefuse && (
             <button
               aria-label="refuse"
-              className={`${component}_button ${component}_button-refuse`}
+              className={`${componentName}_button ${componentName}_button-refuse`}
               children={props?.labelButtonRefuse}
               onClick={() => buttonsClickHandler(false)}
             />
