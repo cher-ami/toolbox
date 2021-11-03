@@ -11,7 +11,7 @@ jobs:
       - run: node -v
 
       - name: 🌎 install dependencies
-        run: npm ci
+        run: npm i && lerna bootstrap
 
       - name: 🙏🏽 build
         run: lerna run build
