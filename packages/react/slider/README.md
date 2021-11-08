@@ -30,8 +30,6 @@ Change the style as needed in [Slider.module.less](slider/Slider.module.less)
 
 ## Dependencies
 
-Cookies Banner uses:
-
 - [gsap](https://github.com/greensock/GSAP)
 - [react-use-gesture](https://github.com/pmndrs/use-gesture)
 - [@wbe/use-window-size](https://github.com/willybrauner/use-window-size)
