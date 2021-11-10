@@ -333,7 +333,7 @@ export function CookiesBanner(props: IProps) {
         {/* Texts content */}
         <p className={`${componentName}_texts`}>
           {props?.noticeText}
-          <a href={props.moreLink} target={"_blank"}>
+          <a className={`${componentName}_more`} href={props.moreLink} target={"_blank"}>
             {props.moreText}
           </a>
         </p>
