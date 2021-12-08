@@ -1,6 +1,6 @@
 # React Custom Cursor
 
-A basic React Custom Cursor. It move only on mouse move. It is possible to animate child elements of the component by listening to the state of the cursor from the CustomCursorManager.
+A basic React Custom Cursor. It move only on mouse move. It is possible to animate child elements by listening to the state of the cursor from the CustomCursorManager.
 
 ## Usage
 

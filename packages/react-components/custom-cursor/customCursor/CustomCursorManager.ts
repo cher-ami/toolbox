@@ -17,7 +17,9 @@ class CustomCursorManager {
 
   /**
    * Start mouse position render
-   * @param $element
+   * @param $element 
+   * @param speed 
+   * @returns 
    */
   public start($element: HTMLElement, speed = 0.15) {
     if (isHandeldDevice) return;
@@ -27,7 +29,7 @@ class CustomCursorManager {
     this.speed = speed;
     this.initEvents();
 
-    // start raf on render transformation
+    // Start raf on render transformation
     this.render(this.position);
   }
 
@@ -45,8 +47,11 @@ class CustomCursorManager {
     document.removeEventListener("mousemove", this.handleMouseMove);
   }
 
-  protected handleMouseMove(event: MouseEvent): void {
-    // get and register in local var, relative position
+  /**
+   * Get and register in local var, relative position
+   * @param event 
+   */
+  protected handleMouseMove(event: MouseEvent): void { 
     this.relativePosition = this.calcCursorPosition({
       x: event.clientX,
       y: event.clientY,
@@ -73,11 +78,11 @@ class CustomCursorManager {
    * @param position
    */
   protected anim(position): void {
-    // calc lerp values
+    // Calc lerp values
     this.position.x = lerp(this.position.x, this.relativePosition.x, this.speed);
     this.position.y = lerp(this.position.y, this.relativePosition.y, this.speed);
 
-    // anim
+    // Anim
     this.$element.style.transform = `translate3d(${position.x}px, ${position.y}px, 0)`;
   }
 
