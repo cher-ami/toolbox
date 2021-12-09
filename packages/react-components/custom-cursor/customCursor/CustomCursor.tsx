@@ -22,7 +22,6 @@ function CustomCursor(props: IProps) {
    * Listen cursorState
    */
   const [cursorType, setCursorType] = useState<TCursorState>(CustomCursorManager.defaultType);
-
   useEffect(() => {
     const handleCursorType = async (pCursorType: TCursorState): Promise<void> => {
       setCursorType(pCursorType);
