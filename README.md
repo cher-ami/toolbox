@@ -26,6 +26,7 @@ If a tool or component can be customized only via parameters, it should not have
 - [cookies-banner](packages/react/cookies-banner)
 - [marquee](packages/react/marquee)
 - [slider](packages/react/slider)
+- [custom-cursor](packages/react/custom-cursor)
 
 ### react-hooks
 
