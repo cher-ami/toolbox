@@ -12,7 +12,7 @@ $ npm i @solid-js/signal
 
 ## Usage
 
-Copy / past the component folder in your React project:
+Copy / past the component folder in your React project and import the `CustomCursor` into the app:
 
 ```tsx
 import { CustomCursor } from "./CustomCursor";
