@@ -1,0 +1,12 @@
+{
+  "name": "debug-grid",
+  "version": "1.0.0",
+  "description": "A debug layout grid to use in development",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "author": "cher-ami",
+  "license": "MIT"
+}

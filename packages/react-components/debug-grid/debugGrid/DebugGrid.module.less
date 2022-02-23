@@ -1,0 +1,51 @@
+@import (reference) "../../references.less";
+
+.root {
+  pointer-events: none;
+  position: fixed;
+  width: 100vw;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  display: flex;
+
+  @media (min-width: @breakpoint-bigLaptop) {
+    justify-content: center;
+  }
+}
+
+.line {
+  height: 100vh;
+  border-left: 1px solid rgb(243, 35, 250);
+  &:first-child {
+    margin-left: 0;
+  }
+  margin-left: calc(@grid-column-mobile - 1px);
+
+  @media (min-width: @breakpoint-tablet) {
+    margin-left: calc(@grid-column-tablet - 1px);
+  }
+
+  @media (min-width: @breakpoint-laptop) {
+    margin-left: calc(@grid-column-desktop - 1px);
+  }
+
+  @media (min-width: @breakpoint-bigLaptop) {
+  }
+}
+
+.lineDesktop {
+  display: none;
+
+  @media (min-width: @breakpoint-laptop) {
+    display: block;
+  }
+}
+
+.lineTablet {
+  display: none;
+
+  @media (min-width: @breakpoint-tablet) {
+    display: block;
+  }
+}
