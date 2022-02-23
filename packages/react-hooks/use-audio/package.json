@@ -1,0 +1,15 @@
+{
+  "name": "use-audio",
+  "version": "1.0.0",
+  "description": "Audio controler hook with Howler",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "author": "cher-ami",
+  "license": "MIT",
+  "dependencies": {
+    "@wbe/debug": "^1.0.0"
+  }
+}
