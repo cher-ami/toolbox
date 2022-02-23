@@ -11,7 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "@wbe/use-window-size": "^2.4.0",
-    "gsap": "^3.8.0",
+    "gsap": "^3.9.1",
     "react-use-gesture": "^9.1.3"
   }
 }

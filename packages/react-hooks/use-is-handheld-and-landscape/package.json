@@ -1,7 +1,7 @@
 {
-  "name": "cookies-banner",
+  "name": "use-is-handheld-and-landscape",
   "version": "1.0.0",
-  "description": "react cookies banner component",
+  "description": "Check if is handheld and landscape",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

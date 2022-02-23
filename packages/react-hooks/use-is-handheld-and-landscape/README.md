@@ -2,9 +2,7 @@
 
 ## Usage
 
-## Dependencies
-
-## props
+Check if a device is handheld and landscape. Usefull for showing landscape mobile screen view.
 
 ## Example
 
