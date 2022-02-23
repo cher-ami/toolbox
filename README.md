@@ -17,6 +17,7 @@ If a tool or component can be customized only via parameters, it should not have
 - Add your tool in src
 - Create an example in "\_example" folder if needed. A vitejs project is setup in each package, ready to be.
 - If you create a new folder in [packages](packages) folder, add it in the [lerna.json](lerna.json) file.
+- Add the new tool in main [README.md](README.md) file.
 
 ### react-components
 
