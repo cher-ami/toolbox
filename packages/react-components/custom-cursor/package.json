@@ -1,0 +1,15 @@
+{
+  "name": "custom-cursor",
+  "version": "1.0.0",
+  "description": "react custom-cursor component",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "author": "cher-ami",
+  "license": "MIT",
+  "dependencies": {
+    "@solid-js/signal": "^1.0.0-beta.1"
+  }
+}
