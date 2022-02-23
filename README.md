@@ -19,6 +19,8 @@ If a tool or component can be customized only via parameters, it should not have
 - If you create a new folder in [packages](packages) folder, add it in the [lerna.json](lerna.json) file.
 - Add the new tool in main [README.md](README.md) file.
 
+## Summary
+
 ### react-components
 
 - [cookies-banner](packages/react/cookies-banner)
