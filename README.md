@@ -5,15 +5,20 @@
 Reusable tools for cher-ami projects **not published on npm and not compiled**.
 You have to copy/past the selected tool in your cher-ami project.
 
-- **react-components**
-  - [cookies-banner](packages/react/cookies-banner)
-  - [marquee](packages/react/marquee)
-  - [slider](packages/react/slider)
-- **react-hooks**
-  - [use-audio](packages/react-hooks/use-audio)
-  - [use-is-handheld-and-landscape](packages/react-hooks/use-is-handheld-and-landscape)
-- **social**
-  - [shareUrls](packages/social/shareUrls)
+### react-components
+
+- [cookies-banner](packages/react/cookies-banner)
+- [marquee](packages/react/marquee)
+- [slider](packages/react/slider)
+
+### react-hooks
+
+- [use-audio](packages/react-hooks/use-audio)
+- [use-is-handheld-and-landscape](packages/react-hooks/use-is-handheld-and-landscape)
+
+### social
+
+- [shareUrls](packages/social/shareUrls)
 
 ## Credits
 
