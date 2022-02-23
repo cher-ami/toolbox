@@ -2,7 +2,7 @@
 
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 
-Reusable tools for cher-ami projects **not published on npm and not compiled**.
+Reusable tools for cher-ami projects **not published on npm and not compiled**.  
 You have to copy/past the selected tool in your cher-ami project.
 
 ### react-components
