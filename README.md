@@ -23,10 +23,10 @@ If a tool or component can be customized only via parameters, it should not have
 
 ### react-components
 
-- [cookies-banner](packages/react/cookies-banner)
-- [marquee](packages/react/marquee)
-- [slider](packages/react/slider)
-- [custom-cursor](packages/react/custom-cursor)
+- [cookies-banner](packages/react-components/cookies-banner)
+- [marquee](packages/react-components/marquee)
+- [slider](packages/react-components/slider)
+- [custom-cursor](packages/react-components/custom-cursor)
 
 ### react-hooks
 
