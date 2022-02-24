@@ -2,13 +2,13 @@
 
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 
-Reusable tools for cher-ami projects.
-These tools are **not published on npm and not compiled**. You have to copy/past the selected tool in your cher-ami project.
+List of tools for cher-ami projects.
+Some of these tools are **not published on npm and not compiled**. You have to copy/past the selected tool in your cher-ami project.
 
-## Why not published on npm?
+## Why not published some tools on npm?
 
 Because some tools need to be re-handled according to use, without that we want to re-develop them from scratch.
-If a tool or component can be customized only via parameters, it should not have its place in this repository but become an independent library.
+If a tool or component can be customized only via parameters, it should not have its place in this repository but become an independent library. 
 
 ## How to contribute?
 
@@ -27,11 +27,16 @@ If a tool or component can be customized only via parameters, it should not have
 - [marquee](packages/react-components/marquee)
 - [slider](packages/react-components/slider)
 - [custom-cursor](packages/react-components/custom-cursor)
+- [react-image](https://github.com/willybrauner/react-libraries/tree/main/packages/react-components/react-image) ↗
+- [react-video](https://github.com/willybrauner/react-libraries/tree/main/packages/react-components/react-video) ↗
+- [react-transition](https://github.com/willybrauner/react-libraries/tree/main/packages/react-components/react-transition) ↗
 
 ### react-hooks
 
 - [use-audio](packages/react-hooks/use-audio)
 - [use-is-handheld-and-landscape](packages/react-hooks/use-is-handheld-and-landscape)
+- [use-window-size](https://github.com/willybrauner/react-libraries/tree/main/packages/react-hooks/use-window-size) ↗
+- [use-did-update](https://github.com/willybrauner/react-libraries/tree/main/packages/react-hooks/use-did-update) ↗
 
 ### social
 
