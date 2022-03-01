@@ -1,18 +1,22 @@
-# Toolbox
+# cher-ami toolbox
 
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 
-Reusable tools for cher-ami projects.
-These tools are **not published on npm and not compiled**. You have to copy/past the selected tool in your cher-ami project.
+Local and external tools collection for cher-ami projects. 
 
-## Why not published on npm?
+This README contains two types of tools:
+
+- Local and NOT published tools (available on this repository)
+- Externals and published tools ↗
+
+## Why not publish tools of this repo on npm?
 
 Because some tools need to be re-handled according to use, without that we want to re-develop them from scratch.
 If a tool or component can be customized only via parameters, it should not have its place in this repository but become an independent library.
 
-## How to contribute?
+## How to contribute to this repos?
 
-- Copy/past the template in the corresponding folder of your tool
+- Copy/past the [\_template](template) folder in the corresponding folder of your tool
 - Add name and description in package.json / README.md
 - Add your tool in src
 - Create an example in "\_example" folder if needed. A vitejs project is setup in each package, ready to be.
@@ -27,15 +31,33 @@ If a tool or component can be customized only via parameters, it should not have
 - [marquee](packages/react-components/marquee)
 - [slider](packages/react-components/slider)
 - [custom-cursor](packages/react-components/custom-cursor)
+- [@wbe/react-image](https://github.com/willybrauner/react-libraries/tree/main/packages/react-components/react-image) ↗
+- [@wbe/react-video](https://github.com/willybrauner/react-libraries/tree/main/packages/react-components/react-video) ↗
+- [@wbe/react-transition](https://github.com/willybrauner/react-libraries/tree/main/packages/react-components/react-transition) ↗
 
 ### react-hooks
 
 - [use-audio](packages/react-hooks/use-audio)
 - [use-is-handheld-and-landscape](packages/react-hooks/use-is-handheld-and-landscape)
+- [@wbe/use-window-size](https://github.com/willybrauner/react-libraries/tree/main/packages/react-hooks/use-window-size) ↗
+- [@wbe/use-did-update](https://github.com/willybrauner/react-libraries/tree/main/packages/react-hooks/use-did-update) ↗
+- [@react-hook/media-query](https://github.com/jaredLunde/react-hook/tree/master/packages/media-query) ↗
+
+### react-rooting
+
+- [@cher-ami/router](https://github.com/cher-ami/router) ↗
 
 ### social
 
-- [shareUrls](packages/social/shareUrls)
+- [shareUrls](packages/social/shareUrls.ts)
+
+### utils
+
+- [@wbe/metas-manager](https://github.com/willybrauner/libraries/tree/main/packages/utils/metas-manager) ↗
+- [@cher-ami/transition-manager](https://github.com/cher-ami/transitions-manager) ↗
+- [@wbe/debug](https://github.com/willybrauner/debug) ↗
+- [@wbe/deferred-promise](https://github.com/willybrauner/deferred-promise) ↗
+- [@solid-js/signal](https://github.com/solid-js/solid/tree/master/libraries/iso-signal) ↗
 
 ## Credits
 
