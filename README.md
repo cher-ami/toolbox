@@ -43,7 +43,7 @@ If a tool or component can be customized only via parameters, it should not have
 - [@wbe/use-did-update](https://github.com/willybrauner/react-libraries/tree/main/packages/react-hooks/use-did-update) ↗
 - [@react-hook/media-query](https://github.com/jaredLunde/react-hook/tree/master/packages/media-query) ↗
 
-### react-rooting
+### react-routing
 
 - [@cher-ami/router](https://github.com/cher-ami/router) ↗
 
