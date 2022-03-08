@@ -113,6 +113,7 @@ export class AudioApi {
       log(this.id, "play")
     }, this.options.delay)
 
+    console.log("Here", this.id, this.isPlaying)
     return this.id
   }
 
@@ -149,7 +150,7 @@ export class AudioApi {
     this.isPlaying = true
     this.sound.fade(0, this.options.volume, duration, this.id)
     log(this.id, "fadeIn...")
-
+    console.log("Oui le fadeIn")
     this.fadeInPromise = deferredPromise()
     return this.fadeInPromise.promise
   }
@@ -170,6 +171,7 @@ export class AudioApi {
   }
 
   public mute(muteState: boolean = MUTE_AUDIO_SIGNAL.state): void {
+    console.log("mute")
     this.sound.mute(muteState, this.id)
   }
 }
