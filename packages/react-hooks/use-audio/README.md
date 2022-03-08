@@ -26,28 +26,28 @@ const audioApiInstance = useAudio(sound, { volume: 0.5 })
 
 ## API
 
-# Play
+### Play
 ```play(): number```
 
-# Pause
+### Pause
 ```pause(): void```
 
-# Replay
+### Replay
 ```replay(): void```
 
-# Stop
+### Stop
 ```stop(): void```
 
-# Loop
+### Loop
 ```loop(): Promise<void>```
 
-# FadeIn
+### FadeIn
 ```fadeIn(duration: number = 1000): Promise<void>```
 
-# FadeOut
+### FadeOut
 ```fadeOut(duration: number = 1000): Promise<void>```
 
-# Mute
+### Mute
 ```mute(): void```
 
 ## props
