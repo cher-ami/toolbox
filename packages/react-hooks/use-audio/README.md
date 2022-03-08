@@ -55,17 +55,11 @@ const audioApiInstance = useAudio(sound, { volume: 0.5 })
 | props     | type     | description           | default value | optional |
 | --------- | -------- | --------------------- | ------------- | -------- |
 | volume | `number` | Set volume of played sound. From 0.0 to 1.0 | 1             | true     |
-| --------- | -------- | --------------------- | ------------- | -------- |
 | autoplay | `boolean` | Decide if sound must be autoplayed | false             | true     |
-| --------- | -------- | --------------------- | ------------- | -------- |
 | loop | `boolean` | Decipe if sound must be played in loop | false             | true     |
-| --------- | -------- | --------------------- | ------------- | -------- |
 | preload | `boolean` | Decide if sound must be preloaded | true             | true     |
-| --------- | -------- | --------------------- | ------------- | -------- |
 | html5 | `boolean` | Same as [Howler's](https://github.com/goldfire/howler.js#html5-boolean-false)| true     |
-| --------- | -------- | --------------------- | ------------- | -------- |
 | delay | `number` | Set a delay in ms before sound is played | 0             | true     |
-| --------- | -------- | --------------------- | ------------- | -------- |
 
 ## Example
 
