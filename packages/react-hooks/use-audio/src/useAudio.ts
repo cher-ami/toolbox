@@ -30,8 +30,10 @@ export const MUTE_AUDIO_SIGNAL = StateSignal<boolean>(false)
  * Audio API Control a single sound
  * @dep Howl https://github.com/goldfire/howler.js
  */
-class AudioApi {
+export class AudioApi {
   protected loadedPromise: TDeferredPromise<any>
+  protected fadeInPromise: TDeferredPromise<any>
+  protected fadeOutPromise: TDeferredPromise<any>
 
   protected audioApiDefaultOptions: TAudioApiOptions = {
     volume: 1,
@@ -44,7 +46,7 @@ class AudioApi {
 
   protected url: string
   protected options: TAudioApiOptions
-  protected sound: Howl
+  public sound: Howl
   public id: number
   public isPlaying: boolean = false
   protected isLoaded: boolean = false
@@ -52,6 +54,8 @@ class AudioApi {
 
   constructor(url: string, options?: TAudioApiOptions) {
     this.loadedPromise = deferredPromise()
+    this.fadeInPromise = deferredPromise()
+    this.fadeOutPromise = deferredPromise()
     this.url = url
     this.options = {
       ...this.audioApiDefaultOptions,
@@ -75,16 +79,22 @@ class AudioApi {
         this.loadedPromise.resolve()
         if (this.isMute) this.mute()
       },
+      onfade: (e) => {
+        this.fadeInPromise.resolve()
+        this.fadeOutPromise.resolve()
+        log(e, "onfade ended")
+      },
     })
   }
 
   protected initEvent(): void {
     // Trigger mute handler on init to set directly global mute state
-    this.muteHandler(MUTE_AUDIO_SIGNAL.state);
+    this.muteHandler(MUTE_AUDIO_SIGNAL.state)
     MUTE_AUDIO_SIGNAL.on(this.muteHandler.bind(this))
   }
   public destroy(): void {
     MUTE_AUDIO_SIGNAL.off(this.muteHandler)
+    log(this.id, "destroy")
     this.sound.unload()
   }
 
@@ -92,23 +102,23 @@ class AudioApi {
     this.muteAllInstances(mute)
   }
 
-  public play(): any {
+  public play(): number {
     setTimeout(() => {
       if (this.id === undefined) {
         this.id = this.sound.play()
       } else {
         this.sound.play()
       }
-      log("sound.play()")
       this.isPlaying = true
+      log(this.id, "play")
     }, this.options.delay)
 
     return this.id
   }
 
-  public pause() {
+  public pause(): void {
     if (!this.isLoaded) return
-    log("sound.pause()", this.id)
+    log(this.id, "pause")
     this.sound.pause(this.id)
   }
 
@@ -117,19 +127,19 @@ class AudioApi {
     this.play()
   }
 
-  public async stop() {
+  public stop(): void {
     this.sound.stop(this.id)
-    log("sound.stop()", this.id)
+    log(this.id, "stop")
     this.isPlaying = false
   }
 
-  public async loop() {
+  public async loop(): Promise<void> {
     if (!this.isLoaded) await this.loadedPromise.promise
     this.sound.loop(true, this.id)
     this.isPlaying = true
   }
 
-  public async fadeIn(duration: number = 1000) {
+  public async fadeIn(duration: number = 1000): Promise<void> {
     if (!this.isLoaded) await this.loadedPromise.promise
     if (this.id === undefined) {
       this.id = this.sound.play()
@@ -138,15 +148,21 @@ class AudioApi {
     }
     this.isPlaying = true
     this.sound.fade(0, this.options.volume, duration, this.id)
-    log("fadeIn", this.id)
+    log(this.id, "fadeIn...")
+
+    this.fadeInPromise = deferredPromise()
+    return this.fadeInPromise.promise
   }
 
-  public async fadeOut(duration: number = 1000) {
+  public async fadeOut(duration: number = 1000): Promise<any> {
     if (!this.isLoaded) await this.loadedPromise.promise
     this.isPlaying = false
     // TODO: add audio stop
     this.sound.fade(this.options.volume, 0, duration, this.id)
-    log("fadeOut", this.id)
+    log(this.id, "fadeOut...")
+
+    this.fadeOutPromise = deferredPromise()
+    return this.fadeOutPromise.promise
   }
 
   public muteAllInstances(muteState: boolean = MUTE_AUDIO_SIGNAL.state): void {
@@ -170,7 +186,6 @@ export const useAudio = (file: string, options?: TAudioApiOptions): AudioApi => 
       instance.destroy()
     }
   }, [])
-
   return instance
 }
 
