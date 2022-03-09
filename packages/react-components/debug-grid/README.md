@@ -30,10 +30,10 @@ No dependencies.
 
 | props             | type                       | description                                                                                                                       | default value |
 | ----------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------- |
-| columnsDesktop\*  | `number`                   | Number of column on desktop (resolutions over @breakpoint-laptop declared in breakpoints.less)                                    | /             |
-| columnsTablet\*   | `number`                   | Number of column on tablet (resolutions over @breakpoint-tablet declared in breakpoints.less)                                     | `{}`          |
-| columnsMobile\*   | `number`                   | Number of column on mobile (resolutions under @breakpoint-tablet declared in breakpoints.less)                                    | `true`        |
-| maxSize           | `number`                   | Max resolution : If setted, over this resolution the grid will stop growing proportionnaly and columns width will be setted in px | `false`       |
+| columnsDesktop\*  | `number`                   | Number of column on desktop (resolutions over @breakpoint-laptop declared in breakpoints.less)                                    | -          |
+| columnsTablet\*   | `number`                   | Number of column on tablet (resolutions over @breakpoint-tablet declared in breakpoints.less)                                     | -          |
+| columnsMobile\*   | `number`                   | Number of column on mobile (resolutions under @breakpoint-tablet declared in breakpoints.less)                                    | -          |
+| maxSize           | `number`                   | Max resolution : If setted, over this resolution the grid will stop growing proportionnaly and columns width will be setted in px | -          |
 | color             | `string`                   | An hex code for the color of the lines. Had to match with `/^#([0-9A-F]{3}){1,2}$/i` or default value will be used                | `#f323fa`     |
 | triggerKey        | `string`                   | The key that will display the grid if it is pressed. Had to match with `/[a-z]|Space|Enter/m` or default value will be used       | `g`           |
 
