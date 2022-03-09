@@ -1,4 +1,15 @@
-@import (reference) "../../references.less";
+// @import (reference) "../../references.less";
+
+// ----------------------------------------------------------------
+// IMPORTANT : TODO :
+// All this part should be imported with "../../references.less"
+// You should uncomment line 1 and delete this part
+
+@breakpoint-tablet: 768px;
+@breakpoint-laptop: 1024px;
+@breakpoint-bigLaptop: 1440px;
+
+// ----------------------------------------------------------------
 
 .root {
   pointer-events: none;
@@ -16,21 +27,22 @@
 
 .line {
   height: 100vh;
-  border-left: 1px solid rgb(243, 35, 250);
+  border-left: 1px solid var(--color);
   &:first-child {
     margin-left: 0;
   }
-  margin-left: calc(@grid-column-mobile - 1px);
+  margin-left: calc(var(--mobile-width) - 1px);
 
   @media (min-width: @breakpoint-tablet) {
-    margin-left: calc(@grid-column-tablet - 1px);
+    margin-left: calc(var(--tablet-width) - 1px);
   }
 
   @media (min-width: @breakpoint-laptop) {
-    margin-left: calc(@grid-column-desktop - 1px);
+    margin-left: calc(var(--laptop-width) - 1px);
   }
 
   @media (min-width: @breakpoint-bigLaptop) {
+    margin-left: calc(var(--bigLaptop-width) - 1px);
   }
 }
 
