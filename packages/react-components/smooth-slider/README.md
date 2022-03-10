@@ -30,12 +30,10 @@ No dependencies.
 
 ## props
 
-> (\* no optional props)
-
-| props             | type                       | description                                                                                                                                                   | default value |
-| ----------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
-| className         | `string`                   | Optional className of the slider                                                                                                                              | -             |
-| onProgress        | `(progress, time?) => void`| A callback executed when slider moves. Params: `progress: number`: scroll position of slider in percentage, `time: DOMHighResTimeStamp` raf native time param | -             |
+| props             | type                       | description                                                                                                                                                    | default value |
+| ----------------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| className         | `string`                   | Optional className of the slider                                                                                                                               | -             |
+| onProgress        | `(progress, time?) => void`| A callback executed when slider moves. Params: `progress: number`: scroll position of slider in percentage, `time?: DOMHighResTimeStamp` raf native time param.| -             |
 
 ## Tips
 
