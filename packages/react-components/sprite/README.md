@@ -1,4 +1,4 @@
-# CSS Sprite Animator
+# CSS Sprite Animator 👾
 
 An extremly light and basic sprite animator
 
