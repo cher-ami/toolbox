@@ -76,7 +76,7 @@ No dependencies.
 | `element`\*     | `HTMLDivElement`      | The div element that will render the sprite                              | 
 | `options`\*     | `TSpriteOptions`      | An options object                                                        | 
 
-### options
+### options :
 
 | option            | type                  | description                                                              | 
 | ----------------- | --------------------- | ------------------------------------------------------------------------ |
