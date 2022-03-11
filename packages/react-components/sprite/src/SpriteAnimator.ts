@@ -8,6 +8,7 @@ export type TSpriteOptions = {
     fps: number
     autoPlay?: boolean
     reverse?: boolean
+    loop?: boolean
 }
 
 type TPosition = {
@@ -23,6 +24,7 @@ export default class SpriteAnimator {
     private boundingRect: DOMRect
     private raf: number
     public reverse: boolean
+    public loop: boolean
 
     private lastTime: number
     private currentTime: number
@@ -41,6 +43,7 @@ export default class SpriteAnimator {
         this.options = options
         this.frameDuration = 1000 / options.fps
         this._currentFrame = 1
+        this.loop = options.loop
 
         this.reverse = options.reverse
 
@@ -51,7 +54,7 @@ export default class SpriteAnimator {
         const methods = [
             "nextFrame",
             "resizeHandler",
-            "loop",
+            "render",
         ]
         methods.forEach((method) => {
             this[method] = this[method].bind(this)
@@ -79,6 +82,14 @@ export default class SpriteAnimator {
      */
     public setFrame(newFrame: number) 
     {
+        if (
+            (newFrame > this.options.totalFrames || newFrame < 1) &&
+            !this.loop
+        ) {
+            this.stop()
+            return
+        }
+
         this._currentFrame = newFrame > this.options.totalFrames ? 1 : newFrame < 1 ? this.options.totalFrames : newFrame
         const {x, y} = this.getBackgroundPositionsByFrame(this._currentFrame)
         this.element.style.backgroundPosition = `-${x}px -${y}px`
@@ -91,7 +102,7 @@ export default class SpriteAnimator {
     {
         if (this._isPlaying) return
         this._isPlaying = true
-        this.raf = window.requestAnimationFrame(this.loop)
+        this.raf = window.requestAnimationFrame(this.render)
     }
 
     /**
@@ -99,9 +110,27 @@ export default class SpriteAnimator {
      */
     public stop () 
     {
-        if (!this._isPlaying) return
+        if (!this._isPlaying) return        
         this._isPlaying = false
         window.cancelAnimationFrame(this.raf)
+    }
+
+    /**
+     * Start playing
+     */
+    public restart () 
+    {
+        this.reset()
+        this.play()
+    }
+
+    /**
+     * Start playing
+     */
+    public reset () 
+    {
+        this._isPlaying = false
+        this.setFrame(this.reverse ? this.options.totalFrames : 1)
     }
 
     /**
@@ -141,6 +170,7 @@ export default class SpriteAnimator {
         this.boundingRect = this.element.getBoundingClientRect() 
         this.element.style.height = `${this.boundingRect.width*(this.options.frameHeight/this.options.frameWidth)}px`
         this.boundingRect = this.element.getBoundingClientRect() 
+        this.setFrame(this.currentFrame)
     }
 
     /**
@@ -164,11 +194,12 @@ export default class SpriteAnimator {
      */
     public destroy()
     {
+        this._isPlaying = false
         this.stop()
         this.removeEventListener()
     }
 
-    private loop() 
+    private render() 
     {
         this.currentTime = Date.now()
         const delta = (this.currentTime - this.lastTime)
@@ -181,6 +212,7 @@ export default class SpriteAnimator {
                 this.nextFrame()
             }
         }
-        this.raf = window.requestAnimationFrame(this.loop)
+        if (!this._isPlaying) return
+        this.raf = window.requestAnimationFrame(this.render)
     }
 }

@@ -43,6 +43,11 @@ interface IProps {
    * default: false
    */
   reverse?: boolean
+  /**
+   * Set current frame
+   * default: false
+   */
+  loop?: boolean
 }
 
 /**
@@ -58,7 +63,8 @@ function Sprite(props: IProps) {
         spriteSheetUrl: props.spriteSheet,
         fps: props.fps || 15,
         autoPlay: props.play,
-        reverse: props.reverse
+        reverse: props.reverse,
+        loop: props.loop,
       })
   
       return () => {
