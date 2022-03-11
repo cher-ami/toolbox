@@ -89,7 +89,7 @@ No dependencies.
 | `columns`\*       | `number`              | Number of columns in spritesheet                                         |
 | `lines`\*         | `number`              | Number of lines in spritesheet                                           |
 | `fps`\*           | `number`              | Number of fps wanted for animation                                       |
-| `autoPlay`        | `boolean`             | True if sprite must play at init                                         |
+| `autoPlay`        | `boolean`             | True if sprite must play at init. Default: `false`                       |
 | `reverse`         | `boolean`             | Will play backward if true. Default: `false`                             |
 | `loop`            | `boolean`             | If sprite animation must loop or not. Default: `false`                   |
 
