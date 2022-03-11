@@ -22,7 +22,8 @@ const App = () => {
       lines: 2,
       fps: 10,
       autoPlay: true,
-      reverse: false
+      reverse: false,
+      loop: false,
     })
   }, []);
 
@@ -56,7 +57,8 @@ const App = () => {
         }}
         fps={10}
         play={playSprite}
-        reverse={reverse}
+        reverse={false}
+        loop={false}
       />
     </div>
   );
@@ -88,8 +90,8 @@ No dependencies.
 | `lines`\*         | `number`              | Number of lines in spritesheet                                           |
 | `fps`\*           | `number`              | Number of fps wanted for animation                                       |
 | `autoPlay`        | `boolean`             | True if sprite must play at init                                         |
-| `reverse`         | `boolean`             | Will play backward if true                                               |
-| `loop`            | `boolean`             | If sprite animation must loop or not                                     |
+| `reverse`         | `boolean`             | Will play backward if true. Default: `false`                             |
+| `loop`            | `boolean`             | If sprite animation must loop or not. Default: `false`                   |
 
 ## API
 
