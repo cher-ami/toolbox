@@ -58,12 +58,24 @@ No dependencies.
 | `lines`\*         | `number`              | Number of lines in spritesheet                                           |
 | `fps`\*           | `number`              | Number of fps wanted for animation                                       |
 | `autoPlay`        | `boolean`             | True if sprite must play at init                                         |
+| `reverse`         | `boolean`             | Will play backward if true                                               |
 
 ## API
+
+### Methods
 
 | method                          | params                                                     | description                                                              | 
 | ------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------ | 
 | `play()`                        | -                                                          | The div element that will render the sprite                              | 
 | `stop()`                        | -                                                          | An options object                                                        | 
-| `nextFrame()`                   | -                                                          | Go to next frame, will play next frames if `autoPlayNextFrame` is true   | 
+| `nextFrame()`                   | -                                                          | Go to next frame                                                         | 
+| `previousFrame()`               | -                                                          | Go to previous frame                                                     | 
 | `setFrame(frame)`               | `frame: number` Frame to go to                             | Got to given frame                                                       | 
+
+### Properties
+
+| properties                      | type                                                       | description                                                              | 
+| ------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------ | 
+| `reverse`                       | `boolean`                                                  | Will play backward if true                                               | 
+| `currentFrame`                  | `number`                                                   | Read only. Index of current sprite frame                                 | 
+| `isPlaying`                     | `boolean`                                                  | Read only. Will play backward if true                                    | 

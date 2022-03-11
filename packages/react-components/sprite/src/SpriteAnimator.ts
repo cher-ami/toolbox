@@ -18,21 +18,29 @@ export default class SpriteAnimator {
     private element: HTMLDivElement
     private options: TSpriteOptions
     private frameDuration: number
-    public currentFrame: number
-    public isPlaying: boolean
+    private _currentFrame: number
+    private _isPlaying: boolean
     private boundingRect: DOMRect
     private raf: number
-    public reverse?: boolean
+    public reverse: boolean
 
     private lastTime: number
     private currentTime: number
+
+    get isPlaying () {
+        return this._isPlaying
+    }
+
+    get currentFrame () {
+        return this._currentFrame
+    }
 
     constructor(element: HTMLDivElement, options: TSpriteOptions) 
     {
         this.element = element
         this.options = options
         this.frameDuration = 1000 / options.fps
-        this.currentFrame = 1
+        this._currentFrame = 1
 
         this.reverse = options.reverse
 
@@ -60,7 +68,7 @@ export default class SpriteAnimator {
         this.element.style.background = `url(${this.options.spriteSheetUrl})`
         this.element.style.backgroundSize = `${this.options.columns*100}%`
         this.resizeHandler()
-        this.setFrame(this.currentFrame)
+        this.setFrame(this._currentFrame)
         this.addEventListener()
         this.options.autoPlay && this.play()
     }
@@ -71,8 +79,8 @@ export default class SpriteAnimator {
      */
     public setFrame(newFrame: number) 
     {
-        this.currentFrame = newFrame > this.options.totalFrames ? 1 : newFrame < 1 ? this.options.totalFrames : newFrame
-        const {x, y} = this.getBackgroundPositionsByFrame(this.currentFrame)
+        this._currentFrame = newFrame > this.options.totalFrames ? 1 : newFrame < 1 ? this.options.totalFrames : newFrame
+        const {x, y} = this.getBackgroundPositionsByFrame(this._currentFrame)
         this.element.style.backgroundPosition = `-${x}px -${y}px`
     }
 
@@ -81,8 +89,8 @@ export default class SpriteAnimator {
      */
     public play () 
     {
-        if (this.isPlaying) return
-        this.isPlaying = true
+        if (this._isPlaying) return
+        this._isPlaying = true
         this.raf = window.requestAnimationFrame(this.loop)
     }
 
@@ -91,8 +99,8 @@ export default class SpriteAnimator {
      */
     public stop () 
     {
-        if (!this.isPlaying) return
-        this.isPlaying = false
+        if (!this._isPlaying) return
+        this._isPlaying = false
         window.cancelAnimationFrame(this.raf)
     }
 
@@ -101,7 +109,7 @@ export default class SpriteAnimator {
      */
     public nextFrame () 
     {        
-        this.setFrame(this.currentFrame + 1)
+        this.setFrame(this._currentFrame + 1)
     }
 
     /**
@@ -109,7 +117,7 @@ export default class SpriteAnimator {
      */
     public previousFrame () 
     {        
-        this.setFrame(this.currentFrame - 1)
+        this.setFrame(this._currentFrame - 1)
     }
 
     /**
