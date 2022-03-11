@@ -71,6 +71,7 @@ No dependencies.
 | `nextFrame()`                   | -                                                          | Go to next frame                                                         | 
 | `previousFrame()`               | -                                                          | Go to previous frame                                                     | 
 | `setFrame(frame)`               | `frame: number` Frame to go to                             | Got to given frame                                                       | 
+| `destroy()`                     | -                                                          | Remove events listeners and stop rendering loop                          | 
 
 ### Properties
 
