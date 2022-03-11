@@ -14,14 +14,15 @@ const App = () => {
 
   useEffect(() => {
     const sprite = new Sprite(spriteRef.current, {
-      spriteSheetUrl: spriteSheet,
-      frameWidth: 49,
-      frameHeight: 49,
-      totalFrames: 21,
-      columns: 7,
-      lines: 3,
+      spriteSheetUrl: "assets/spriteSheet.png",
+      frameWidth: 256,
+      frameHeight: 256,
+      totalFrames: 16,
+      columns: 8,
+      lines: 2,
       fps: 10,
-      autoPlay: true
+      autoPlay: true,
+      reverse: false
     })
   }, []);
 
