@@ -41,15 +41,15 @@ No dependencies.
 
 > (\* required params)
 
-| param         | type                  | description                                                              | 
-| ------------- | --------------------- | ------------------------------------------------------------------------ | 
+| param           | type                  | description                                                              | 
+| --------------- | --------------------- | ------------------------------------------------------------------------ | 
 | `element`\*     | `HTMLDivElement`      | The div element that will render the sprite                              | 
 | `options`\*     | `TSpriteOptions`      | An options object                                                        | 
 
 ## options
 
-| option          | type                  | description                                                              | 
-| --------------- | --------------------- | ------------------------------------------------------------------------ |
+| option            | type                  | description                                                              | 
+| ----------------- | --------------------- | ------------------------------------------------------------------------ |
 | `spriteSheetUrl`\*| `string`              | The url of the spritesheet                                               | 
 | `totalFrames`\*   | `number`              | Total of frames in spritesheeet                                          |
 | `frameWidth`\*    | `number`              | Original frames width in px                                              |
@@ -75,7 +75,7 @@ No dependencies.
 
 ### Properties
 
-| properties                      | type                                                       | description                                                              | 
+| property                        | type                                                       | description                                                              | 
 | ------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------ | 
 | `reverse`                       | `boolean`                                                  | Will play backward if true                                               | 
 | `currentFrame`                  | `number`                                                   | Read only. Index of current sprite frame                                 | 
