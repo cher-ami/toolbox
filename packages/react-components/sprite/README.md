@@ -7,7 +7,7 @@ An extremly light and basic sprite animator
 Create a new `SpriteAnimator` instance with div element where the sprite will be displayed and the spritesheet options.
 
 ```tsx
-import Sprite from "./Sprite";
+import SpriteAnimator from "./SpriteAnimator";
 
 const App = () => {
   const spriteRef = useRef<HTMLDivElement>(null);
@@ -36,7 +36,7 @@ const App = () => {
 
 ## React Sprite component
 
-Or you can use the ready to use react component :
+Or you can use the ready to use `Sprite` component :
 
 ```tsx
 import Sprite from "./Sprite";
