@@ -2,9 +2,9 @@
 
 An extremly light and basic sprite animator
 
-## Usage
+## Basic usage
 
-Copy / past the component folder in your React project:
+Create a new `SpriteAnimator` instance with div element where the sprite will be displayed and the spritesheet options.
 
 ```tsx
 import Sprite from "./Sprite";
@@ -13,7 +13,7 @@ const App = () => {
   const spriteRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const sprite = new Sprite(spriteRef.current, {
+    const sprite = new SpriteAnimator(spriteRef.current, {
       spriteSheetUrl: "assets/spriteSheet.png",
       frameWidth: 256,
       frameHeight: 256,
@@ -29,6 +29,35 @@ const App = () => {
   return (
     <div>
       <div ref={spriteRef}>
+    </div>
+  );
+};
+```
+
+## React Sprite component
+
+Or you can use the ready to use react component :
+
+```tsx
+import Sprite from "./Sprite";
+
+const App = () => {
+  return (
+    <div>
+      <Sprite 
+        className={"sprite"}
+        spriteSheet={"assets/spriteSheet.png"}
+        spriteSheetData={{
+          frameWidth: 256,
+          frameHeight: 256,
+          totalFrames: 16,
+          columns: 8,
+          lines: 2,
+        }}
+        fps={10}
+        play={playSprite}
+        reverse={reverse}
+      />
     </div>
   );
 };
