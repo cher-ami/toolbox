@@ -1,0 +1,26 @@
+@import (reference) "../../references.less";
+
+.sceneWrapper {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: calc(100 * var(--vh));
+  overflow: hidden;
+}
+
+.sceneContainer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  touch-action: none;
+  canvas {
+    width: 100%;
+    height: 100%;
+  }
+}
