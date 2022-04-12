@@ -31,7 +31,7 @@ If a tool or component can be customized only via parameters, it should not have
 - [marquee](packages/react-components/marquee)
 - [slider](packages/react-components/slider)
 - [custom-cursor](packages/react-components/custom-cursor)
-- [@wbe/react-image](https://github.com/willybrauner/react-libraries/tree/main/packages/react-components/react-image) ↗ (React wrapper of [@wbe/lazy-image](https://github.com/willybrauner/lazy-image))
+- [@wbe/react-image](https://github.com/willybrauner/react-libraries/tree/main/packages/react-components/react-image) ↗
 - [@wbe/react-video](https://github.com/willybrauner/react-libraries/tree/main/packages/react-components/react-video) ↗
 - [@wbe/react-transition](https://github.com/willybrauner/react-libraries/tree/main/packages/react-components/react-transition) ↗
 
