@@ -31,13 +31,12 @@ If a tool or component can be customized only via parameters, it should not have
 - [marquee](packages/react-components/marquee)
 - [slider](packages/react-components/slider)
 - [custom-cursor](packages/react-components/custom-cursor)
-- [@wbe/react-image](https://github.com/willybrauner/react-libraries/tree/main/packages/react-components/react-image) ↗
+- [@wbe/react-image](https://github.com/willybrauner/react-libraries/tree/main/packages/react-components/react-image) ↗ (React wrapper of [@wbe/lazy-image](https://github.com/willybrauner/lazy-image))
 - [@wbe/react-video](https://github.com/willybrauner/react-libraries/tree/main/packages/react-components/react-video) ↗
 - [@wbe/react-transition](https://github.com/willybrauner/react-libraries/tree/main/packages/react-components/react-transition) ↗
 
 ### react-hooks
 
-- [use-audio](packages/react-hooks/use-audio)
 - [use-is-handheld-and-landscape](packages/react-hooks/use-is-handheld-and-landscape)
 - [@wbe/use-window-size](https://github.com/willybrauner/react-libraries/tree/main/packages/react-hooks/use-window-size) ↗
 - [@wbe/use-did-update](https://github.com/willybrauner/react-libraries/tree/main/packages/react-hooks/use-did-update) ↗
@@ -47,11 +46,18 @@ If a tool or component can be customized only via parameters, it should not have
 
 - [@cher-ami/router](https://github.com/cher-ami/router) ↗
 
-### utils
+### managers
 
-- [shareUrls](packages/social/shareUrls.ts)
 - [@cher-ami/transition-manager](https://github.com/cher-ami/transitions-manager) ↗
 - [@cher-ami/smooth-scroll](https://github.com/cher-ami/smooth-scroll) ↗
+- [@cher-ami/audio-manager](https://github.com/cher-ami/audio-manager) ↗
+
+
+### utils
+
+
+- [shareUrls](packages/social/shareUrls.ts)
+- [@wbe/lazy-image](https://github.com/willybrauner/lazy-image) ↗
 - [@wbe/debug](https://github.com/willybrauner/debug) ↗
 - [@wbe/deferred-promise](https://github.com/willybrauner/deferred-promise) ↗
 - [@solid-js/signal](https://github.com/solid-js/solid/tree/master/libraries/iso-signal) ↗
