@@ -47,17 +47,15 @@ If a tool or component can be customized only via parameters, it should not have
 
 - [@cher-ami/router](https://github.com/cher-ami/router) ↗
 
-### social
-
-- [shareUrls](packages/social/shareUrls.ts)
-
 ### utils
 
-- [@wbe/metas-manager](https://github.com/willybrauner/libraries/tree/main/packages/utils/metas-manager) ↗
+- [shareUrls](packages/social/shareUrls.ts)
 - [@cher-ami/transition-manager](https://github.com/cher-ami/transitions-manager) ↗
+- [@cher-ami/smooth-scroll](https://github.com/cher-ami/smooth-scroll) ↗
 - [@wbe/debug](https://github.com/willybrauner/debug) ↗
 - [@wbe/deferred-promise](https://github.com/willybrauner/deferred-promise) ↗
 - [@solid-js/signal](https://github.com/solid-js/solid/tree/master/libraries/iso-signal) ↗
+
 
 ## Credits
 
