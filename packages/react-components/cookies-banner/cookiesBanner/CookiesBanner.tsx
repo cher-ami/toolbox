@@ -292,7 +292,7 @@ export function CookiesBanner(props: IProps) {
       initialMount.current = false;
     } else {
       // toggle show class
-      componentAnim(true);
+      componentAnim(props.show);
     }
   }, [props.show]);
 
