@@ -92,6 +92,7 @@ No dependencies.
 | `autoPlay`        | `boolean`             | True if sprite must play at init. Default: `false`                       |
 | `reverse`         | `boolean`             | Will play backward if true. Default: `false`                             |
 | `loop`            | `boolean`             | If sprite animation must loop or not. Default: `false`                   |
+| `yoyo`            | `boolean`             | If sprite animation must yoyo or not. Default: `false`                   |
 
 ## API
 
@@ -99,12 +100,13 @@ No dependencies.
 
 | method                          | params                                                     | description                                                              | 
 | ------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------ | 
-| `play()`                        | -                                                          | The div element that will render the sprite                              | 
-| `stop()`                        | -                                                          | An options object                                                        | 
-| `restart()`                     | -                                                          | Restart animation (play immediately)                                     | 
-| `reset()`                       | -                                                          | Reset animation to first frame (or last frame if reverse is true) (does not play immediately)  | 
-| `nextFrame()`                   | -                                                          | Go to next frame                                                         | 
-| `previousFrame()`               | -                                                          | Go to previous frame                                                     | 
+| `play(autoReset)`               | `autoReset: boolean` Will call `reset()` before if `true`  | Play sprite                                                              | 
+| `stop()`                        | -                                                          | Stop                                                                     | 
+| `playReverse(autoReset)`        | `autoReset: boolean` Will call `reset()` before if `true`  | Set reverse to true and play                                             | 
+| `restart()`                     | -                                                          | Restart animation (shortcut for `play(true)`)                            | 
+| `reset()`                       | -                                                          | Reset animation to first frame (or last frame if reverse is true) and stop (does not play immediately)  | 
+| `nextFrame()`                   | -                                                          | Go to next frame (sync with reverse option)                              | 
+| `previousFrame()`               | -                                                          | Go to previous frame (sync with reverse option)                          | 
 | `setFrame(frame)`               | `frame: number` Frame to go to                             | Got to given frame                                                       | 
 | `destroy()`                     | -                                                          | Remove events listeners and stop rendering loop                          | 
 
@@ -114,5 +116,6 @@ No dependencies.
 | ------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------ | 
 | `reverse`                       | `boolean`                                                  | Will play backward if true                                               | 
 | `loop`                          | `boolean`                                                  | Will continually loop if true                                            | 
+| `yoyo`                          | `boolean`                                                  | Will play with yoyo effect                                               | 
 | `currentFrame`                  | `number`                                                   | Read only. Index of current sprite frame                                 | 
 | `isPlaying`                     | `boolean`                                                  | Read only. Will play backward if true                                    | 

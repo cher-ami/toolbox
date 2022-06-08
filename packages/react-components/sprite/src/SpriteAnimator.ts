@@ -114,7 +114,6 @@ export default class SpriteAnimator {
      */
     public playReverse (autoReset?: boolean) 
     {        
-        if (this._isPlaying) return
         this.reverse = true
         this.play(autoReset)
     }
