@@ -157,10 +157,14 @@ export default class SpriteAnimator {
     
             if (newFrame > this.options.totalFrames) {
                 this.currentYoyoDirection = -1
-                newFrame = this.options.totalFrames - 1
+                if (this.loop || !this.reverse) {
+                    newFrame = this.options.totalFrames - 1
+                }
             } else if (newFrame < 1) {
                 this.currentYoyoDirection = 1
-                newFrame = 2
+                if (this.loop || this.reverse) {
+                    newFrame = 2
+                }
             }
         } else {
             newFrame = this.reverse ? this._currentFrame - 1 : this._currentFrame + 1
