@@ -9,6 +9,7 @@ export type TSpriteOptions = {
     autoPlay?: boolean
     reverse?: boolean
     loop?: boolean
+    yoyo?: boolean
   }
   
   type TPosition = {
@@ -47,6 +48,7 @@ export default class SpriteAnimator {
         this.frameDuration = 1000 / options.fps
         this._currentFrame = 1
         this.loop = options.loop
+        this.yoyo = options.yoyo
         this.currentYoyoDirection = 1
         
         this.reverse = options.reverse
