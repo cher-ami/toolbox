@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import Sprite from '../src/Sprite';
 import SpriteAnimator from '../src/SpriteAnimator';
 import spritesheet from './spritesheet.png';
 

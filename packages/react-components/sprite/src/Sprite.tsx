@@ -39,15 +39,20 @@ interface IProps {
    */
   frame?: number
   /**
-   * Set current frame
+   * Set reverse option
    * default: false
    */
   reverse?: boolean
   /**
-   * Set current frame
+   * Set loop option
    * default: false
    */
   loop?: boolean
+  /**
+   * Set yoyo option
+   * default: false
+   */
+  yoyo?: boolean
 }
 
 /**
@@ -65,6 +70,7 @@ function Sprite(props: IProps) {
         autoPlay: props.play,
         reverse: props.reverse,
         loop: props.loop,
+        yoyo: props.yoyo
       })
   
       return () => {
@@ -81,7 +87,7 @@ function Sprite(props: IProps) {
     }, [props.play]);
 
     useEffect(() => {
-        if (props.frame) {
+        if (typeof props.frame === "number") {
             spriteRef.current.setFrame(props.frame)
         }
     }, [props.frame]);
@@ -89,6 +95,14 @@ function Sprite(props: IProps) {
     useEffect(() => {
         spriteRef.current.reverse = props.reverse
     }, [props.reverse]);
+
+    useEffect(() => {
+        spriteRef.current.loop = props.loop
+    }, [props.loop]);
+
+    useEffect(() => {
+        spriteRef.current.yoyo = props.yoyo
+    }, [props.yoyo]);
 
     return (<div className={[css.root, props.className].filter((v) => v).join(" ")} ref={rootRef} />)
 }

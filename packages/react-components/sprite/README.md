@@ -59,6 +59,7 @@ const App = () => {
         play={playSprite}
         reverse={false}
         loop={false}
+        yoyo={false}
       />
     </div>
   );
