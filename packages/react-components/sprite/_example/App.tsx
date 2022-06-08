@@ -42,7 +42,10 @@ export default function App() {
       <button onClick={() => spriteRef.current.play()}>Play</button>
       <button onClick={() => spriteRef.current.stop()}>Stop</button>
       <button onClick={() => spriteRef.current.restart()}>Restart</button>
+      <button onClick={() => spriteRef.current.playReverse(true)}>Play reverse</button>
       <button onClick={() => spriteRef.current.reset()}>Reset</button>
+      <button onClick={() => spriteRef.current.previousFrame()}>Previous frame</button>
+      <button onClick={() => spriteRef.current.nextFrame()}>Next frame</button>
       <button onClick={() => setReverse(!reverse)}>Reverse : {reverse ? "true" : "false"}</button>
       <button onClick={() => setLoop(!loop)}>Loop : {loop ? "true" : "false"}</button>
     </div>

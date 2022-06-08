@@ -9,11 +9,12 @@ export type TSpriteOptions = {
     autoPlay?: boolean
     reverse?: boolean
     loop?: boolean
-}
-
-type TPosition = {
-    x: number, y: number
-}
+  }
+  
+  type TPosition = {
+    x: number
+    y: number
+  }
 
 export default class SpriteAnimator {
     private element: HTMLDivElement
@@ -51,11 +52,7 @@ export default class SpriteAnimator {
         this.currentTime = 0
 
         // Bind methods to keep right context
-        const methods = [
-            "nextFrame",
-            "resizeHandler",
-            "render",
-        ]
+        const methods = ["nextFrame", "resizeHandler", "render"]
         methods.forEach((method) => {
             this[method] = this[method].bind(this)
         })
@@ -69,40 +66,52 @@ export default class SpriteAnimator {
     private init () 
     {
         this.element.style.background = `url(${this.options.spriteSheetUrl})`
-        this.element.style.backgroundSize = `${this.options.columns*100}%`
         this.resizeHandler()
-        this.setFrame(this._currentFrame)
+        this.setFrame(this.reverse ? this.options.totalFrames : this._currentFrame)
         this.addEventListener()
         this.options.autoPlay && this.play()
     }
 
     /**
      * Got to indicated frame
-     * @param newFrame 
+     * @param newFrame
      */
     public setFrame(newFrame: number) 
     {
-        if (
-            (newFrame > this.options.totalFrames || newFrame < 1) &&
-            !this.loop
-        ) {
+        if ((newFrame > this.options.totalFrames || newFrame < 1) && !this.loop) {
             this.stop()
             return
         }
-
-        this._currentFrame = newFrame > this.options.totalFrames ? 1 : newFrame < 1 ? this.options.totalFrames : newFrame
-        const {x, y} = this.getBackgroundPositionsByFrame(this._currentFrame)
+    
+        this._currentFrame =
+            newFrame > this.options.totalFrames
+            ? 1
+            : newFrame < 1
+            ? this.options.totalFrames
+            : newFrame
+        const { x, y } = this.getBackgroundPositionsByFrame(this._currentFrame)
         this.element.style.backgroundPosition = `-${x}px -${y}px`
     }
 
     /**
      * Start playing
      */
-    public play () 
+    public play (autoReset?: boolean) 
     {
         if (this._isPlaying) return
+        autoReset && this.reset()
         this._isPlaying = true
         this.raf = window.requestAnimationFrame(this.render)
+    }
+
+    /**
+     * Start playing reverse
+     */
+    public playReverse (autoReset?: boolean) 
+    {        
+        if (this._isPlaying) return
+        this.reverse = true
+        this.play(autoReset)
     }
 
     /**
@@ -110,25 +119,25 @@ export default class SpriteAnimator {
      */
     public stop () 
     {
-        if (!this._isPlaying) return        
+        if (!this._isPlaying) return
         this._isPlaying = false
         window.cancelAnimationFrame(this.raf)
     }
 
     /**
      * Start playing
+     * Shortcut for this.play(true)
      */
     public restart () 
     {
-        this.reset()
-        this.play()
+        this.play(true)
     }
 
     /**
      * Start playing
      */
     public reset () 
-    {
+    {        
         this._isPlaying = false
         this.setFrame(this.reverse ? this.options.totalFrames : 1)
     }
@@ -137,39 +146,48 @@ export default class SpriteAnimator {
      * Got to next frame
      */
     public nextFrame () 
-    {        
-        this.setFrame(this._currentFrame + 1)
+    {
+        this.setFrame(
+            this.reverse ? this._currentFrame - 1 : this._currentFrame + 1
+        )
     }
 
     /**
      * Got to next frame
      */
     public previousFrame () 
-    {        
-        this.setFrame(this._currentFrame - 1)
+    {
+        this.setFrame(
+            this.reverse ? this._currentFrame + 1 : this._currentFrame - 1
+        )
     }
 
     /**
      * Give the background position associated to given frame
-     * @param frame 
-     * @returns TPosition {x, y}: background position 
+     * @param frame
+     * @returns TPosition {x, y}: background position
      */
-    private getBackgroundPositionsByFrame(frame: number): TPosition
-    {        
-        const frameIndex = frame-1        
-        const x = frameIndex%this.options.columns * (this.boundingRect.width)
-        const y = Math.floor(frameIndex/this.options.columns) * (this.boundingRect.height)
-        return {x, y}
+    private getBackgroundPositionsByFrame (frame: number): TPosition 
+    {
+        const frameIndex = frame - 1
+        const x = (frameIndex % this.options.columns) * this.boundingRect.width
+        const y = Math.floor(frameIndex / this.options.columns) * this.boundingRect.height
+        return { x, y }
     }
-
+  
     /**
      * Resize handler
      */
-    private resizeHandler()
-    {       
-        this.boundingRect = this.element.getBoundingClientRect() 
-        this.element.style.height = `${this.boundingRect.width*(this.options.frameHeight/this.options.frameWidth)}px`
-        this.boundingRect = this.element.getBoundingClientRect() 
+    private resizeHandler () 
+    {
+        this.boundingRect = this.element.getBoundingClientRect()
+        this.element.style.height = `${
+            this.boundingRect.width * (this.options.frameHeight / this.options.frameWidth)
+        }px`
+        this.boundingRect = this.element.getBoundingClientRect()
+        this.element.style.backgroundSize = `${
+            this.options.columns * this.boundingRect.width
+        }px ${this.options.lines * this.boundingRect.height}px`
         this.setFrame(this.currentFrame)
     }
 
@@ -202,15 +220,11 @@ export default class SpriteAnimator {
     private render() 
     {
         this.currentTime = Date.now()
-        const delta = (this.currentTime - this.lastTime)
+        const delta = this.currentTime - this.lastTime
 
         if (delta > this.frameDuration) {
-            this.lastTime = this.currentTime - (delta % this.frameDuration);
-            if (this.reverse) {
-                this.previousFrame()
-            } else {
-                this.nextFrame()
-            }
+            this.lastTime = this.currentTime - (delta % this.frameDuration)
+            this.nextFrame()
         }
         if (!this._isPlaying) return
         this.raf = window.requestAnimationFrame(this.render)
