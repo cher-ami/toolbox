@@ -26,6 +26,8 @@ export default class SpriteAnimator {
     private raf: number
     public reverse: boolean
     public loop: boolean
+    public yoyo: boolean
+    private currentYoyoDirection: (1 | -1)
 
     private lastTime: number
     private currentTime: number
@@ -45,7 +47,8 @@ export default class SpriteAnimator {
         this.frameDuration = 1000 / options.fps
         this._currentFrame = 1
         this.loop = options.loop
-
+        this.currentYoyoDirection = 1
+        
         this.reverse = options.reverse
 
         this.lastTime = Date.now()
@@ -147,9 +150,23 @@ export default class SpriteAnimator {
      */
     public nextFrame () 
     {
-        this.setFrame(
-            this.reverse ? this._currentFrame - 1 : this._currentFrame + 1
-        )
+        let newFrame: number
+
+        if (this.yoyo) {
+            newFrame = this._currentFrame + this.currentYoyoDirection
+    
+            if (newFrame > this.options.totalFrames) {
+                this.currentYoyoDirection = -1
+                newFrame = this.options.totalFrames - 1
+            } else if (newFrame < 1) {
+                this.currentYoyoDirection = 1
+                newFrame = 2
+            }
+        } else {
+            newFrame = this.reverse ? this._currentFrame - 1 : this._currentFrame + 1
+        }
+
+        this.setFrame(newFrame)
     }
 
     /**
@@ -157,9 +174,23 @@ export default class SpriteAnimator {
      */
     public previousFrame () 
     {
-        this.setFrame(
-            this.reverse ? this._currentFrame + 1 : this._currentFrame - 1
-        )
+        let newFrame: number
+
+        if (this.yoyo) {
+            newFrame = this._currentFrame - this.currentYoyoDirection
+    
+            if (newFrame > this.options.totalFrames) {
+                this.currentYoyoDirection = 1
+                newFrame = this.options.totalFrames - 1
+            } else if (newFrame < 1) {
+                this.currentYoyoDirection = -1
+                newFrame = 2
+            }
+        } else {
+            newFrame = this.reverse ? this._currentFrame + 1 : this._currentFrame - 1
+        }
+
+        this.setFrame(newFrame)
     }
 
     /**

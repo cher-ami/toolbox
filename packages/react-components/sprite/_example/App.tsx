@@ -36,6 +36,12 @@ export default function App() {
     spriteRef.current.loop = loop
   }, [loop]);
 
+  const [yoyo, setYoyo] = useState<boolean>(false);
+
+  useEffect(() => {
+    spriteRef.current.yoyo = yoyo
+  }, [yoyo]);
+
   return (
     <div>
       <div style={{width: "78vw"}} ref={spriteContainerRef} />
@@ -48,6 +54,7 @@ export default function App() {
       <button onClick={() => spriteRef.current.nextFrame()}>Next frame</button>
       <button onClick={() => setReverse(!reverse)}>Reverse : {reverse ? "true" : "false"}</button>
       <button onClick={() => setLoop(!loop)}>Loop : {loop ? "true" : "false"}</button>
+      <button onClick={() => setYoyo(!yoyo)}>Yoyo : {yoyo ? "true" : "false"}</button>
     </div>
   )
 }
