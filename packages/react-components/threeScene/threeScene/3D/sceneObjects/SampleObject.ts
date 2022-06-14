@@ -1,7 +1,6 @@
 import {
   MeshStandardMaterial,
   Mesh,
-  Clock,
   FrontSide,
   TorusKnotGeometry
 } from "three"
@@ -10,6 +9,7 @@ import debug from "@wbe/debug"
 
 const componentName = "SampleObject"
 const log = debug(`front:3D:${componentName}`)
+
 class SampleObject extends BaseSceneObject {
   declare geometry: TorusKnotGeometry
   declare material: MeshStandardMaterial
