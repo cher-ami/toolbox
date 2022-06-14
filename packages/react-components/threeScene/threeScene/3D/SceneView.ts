@@ -9,8 +9,9 @@ import {
   Vector2,
   EquirectangularReflectionMapping,
   Texture,
+  DirectionalLight,
+  Color,
 } from "three"
-
 import SceneBase from "./SceneBase"
 import AssetManager, { IFile } from "./AssetManager"
 import isMobile from "./utils/isMobile"
@@ -20,6 +21,7 @@ import SampleObject from "./sceneObjects/SampleObject"
 import debug from "@wbe/debug"
 import sceneConfig from "./data/sceneConfig"
 import SampleGltfObject from "./sceneObjects/SampleGltfObject"
+import BaseSceneObject from "./sceneObjects/BaseSceneObject"
 
 const componentName = "SceneView"
 const log = debug(`front:3D:${componentName}`)
@@ -36,6 +38,8 @@ class SceneView extends SceneBase {
    */
   constructor() {
     super()
+
+    this._backgroundColor = new Color(sceneConfig.sceneRender.backgroundColor)
 
     this.mouse = new Vector2(-100, -100) // set mouse first position offset to prevent first raycast
 
@@ -54,6 +58,7 @@ class SceneView extends SceneBase {
 
     this._onSceneReady()
 
+    // TODO
     //process.env.NODE_ENV === "development" && this._initPane()
     this._initPane()
   }
@@ -63,18 +68,16 @@ class SceneView extends SceneBase {
    */
   _setupEnvMap(hasBackground: boolean = false) {
     // Setup env map
-    const envHdr: Texture = AssetManager.getAsset("envmap").asset
+    const envHdr: Texture = AssetManager.getAsset("envmap").asset as Texture
     envHdr.mapping = EquirectangularReflectionMapping
-    //envMap.encoding = LinearEncoding
-    //envMap.needsUpdate = true
 
     // setup env on scene
     this._scene.environment = envHdr
     this._scene.background = hasBackground ? envHdr : null // to debug envmap
   }
 
-  _getMainCamera() {
-    return super._getMainCamera(
+  _setupMainCamera() {
+    return super._setupMainCamera(
       isMobile ? sceneConfig.mainCamera.fovMobile : sceneConfig.mainCamera.fov,
       sceneConfig.mainCamera.near,
       sceneConfig.mainCamera.far,
@@ -89,12 +92,15 @@ class SceneView extends SceneBase {
    *
    * @returns Array
    */
-  protected _getSceneObjects(): Array<{} | Mesh> {
+  protected _getSceneObjects(): Array<BaseSceneObject | Object3D | Group | Mesh> {
     // Setup scene env map
-    this._setupEnvMap()
+    this._setupEnvMap(sceneConfig.sceneRender.hasBackgroundEnv)
 
     // Ambient light
     const ambientLight = new AmbientLight(0xffffff, 1)
+
+    // Directional light
+    const directionalLight = new DirectionalLight(0xffffff, 0.5)
 
     // Get sample object
     const sampleObject = new SampleObject()
@@ -116,10 +122,15 @@ class SceneView extends SceneBase {
     this._helpersGroup = new Group()
     this._helpersGroup.name = "Helpers"
     this._helpersGroup.visible = false
-    // TODO: create helpers
     ;[axisHelper, gridHelper].forEach((obj) => this._helpersGroup.add(obj))
 
-    return [ambientLight, sampleObject, sampleGltfObject, this._helpersGroup]
+    return [
+      ambientLight,
+      directionalLight,
+      sampleObject,
+      sampleGltfObject,
+      this._helpersGroup,
+    ]
   }
 
   // TODO: add to helpers
@@ -146,7 +157,7 @@ class SceneView extends SceneBase {
     this.raycaster.setFromCamera(this.mouse as Vector2, this.camera)
 
     // calculate objects intersecting the picking ray
-    // TODO: add intersects
+    // NOTE : can be any objects in scene, more performant than raycast on all objects
     const intersects = this.raycaster.intersectObjects(this._scene.children)
   }
 
@@ -172,7 +183,7 @@ class SceneView extends SceneBase {
   private _initPane(): void {
     this._pane = new Pane()
     const paneDefaultParams = {
-      Postprocessing: false,
+      Postprocessing: sceneConfig.hasPostProcessing,
       "Show helpers": false,
       "Debug Sample Object": false,
       "Activate debug": "ctrl+d or in url #debug",
@@ -184,6 +195,9 @@ class SceneView extends SceneBase {
     })
     f1.addInput(paneDefaultParams, "Show helpers").on("change", (ev) => {
       this._helpersGroup.visible = ev.value
+    })
+    f1.addInput(paneDefaultParams, "Postprocessing").on("change", (ev) => {
+      sceneConfig.hasPostProcessing = ev.value
     })
     f1.addInput(paneDefaultParams, "Activate debug")
 

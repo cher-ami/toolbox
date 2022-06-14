@@ -1,6 +1,5 @@
 import css from "./ThreeScene.module.less";
 import React, { useEffect, useRef, useState } from "react";
-import { merge } from "./helpers/merge";
 import throttle from "lodash.throttle";
 import { IFile } from "./3D/AssetManager";
 import assets3dData from "./3D/data/assets3dData";
@@ -38,6 +37,9 @@ function ThreeScene(props: IProps) {
     sceneIsReadyRef.current = is;
     _setSceneIsReady(is);
   };
+
+  // TODO: make a hook for the base requirements
+  //const [sceneView, isReady] = useThreeSceneView({container, assets})
 
   useEffect(() => {
     // Prepare asset data for 3d asset loader
@@ -120,7 +122,7 @@ function ThreeScene(props: IProps) {
   // --------------------------------------------------------------------------- RENDER
 
   return (
-    <div className={merge([css.root, props.className])}>
+    <div className={[css.root, props.className].filter((e) => e).join(" ")}>
       <div className={css.sceneWrapper}>
         <div
           style={{ visibility: !sceneIsReady ? "hidden" : "initial" }}

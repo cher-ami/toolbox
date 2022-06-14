@@ -13,6 +13,7 @@ import {
   Vector3,
   Color,
   Object3D,
+  Group,
 } from "three"
 import { OrbitControls } from "./utils/controls/OrbitControls"
 import threeDevToolBrowserPlugin from "./helpers/threeDevToolBrowserPlugin"
@@ -29,6 +30,12 @@ import PerformanceWatcher from "./PerformanceWatcher"
 import AssetManager, { IFile } from "./AssetManager"
 import debug from "@wbe/debug"
 import { limitNumberRange } from "./utils/limitNumberRange"
+import BaseSceneObject from "./sceneObjects/BaseSceneObject"
+import sceneConfig from "./data/sceneConfig"
+
+// TODO: add https://github.com/pmndrs/detect-gpu
+// TODO : add camera controls
+// TODO: let it optional
 
 const componentName = "SceneBase"
 const log = debug(`front:3D:${componentName}`)
@@ -51,7 +58,8 @@ export const BACKGROUND_COLOR = 0xf1f2f3
 class SceneBase {
   protected _domContainer: HTMLElement
   protected _renderer: WebGLRenderer
-  _sceneObjects: Array<Object | Object3D>
+  _sceneObjects: Array<BaseSceneObject | Object3D>
+  protected _backgroundColor: Color
   public get renderer() {
     return this._renderer
   }
@@ -105,6 +113,7 @@ class SceneBase {
    */
   constructor() {
     this._isDebugSceneActive = window.location.hash === "#debug"
+    this._backgroundColor = new Color(0xffffff)
 
     this.performance = new PerformanceWatcher()
 
@@ -130,7 +139,7 @@ class SceneBase {
 
     this._renderer = new WebGLRenderer({
       powerPreference: "high-performance",
-      antialias: true,
+      antialias: false,
       stencil: false,
       depth: true,
       alpha: true,
@@ -141,12 +150,7 @@ class SceneBase {
     this.renderer.setPixelRatio(limitNumberRange(1, window.devicePixelRatio, 2))
 
     // Tone mapping
-    //this._renderer.toneMapping = ReinhardToneMapping
-    //this._renderer.toneMappingExposure = 3
-
-    // Shadow
-    // this._renderer.shadowMap.enabled = true
-    // this._renderer.shadowMap.type = PCFSoftShadowMap;
+    //this._renderer.toneMapping = ReinhardToneMapping // Advised tone mapping for realistic rendering
 
     this._renderer.setSize(this._rendererSize.width, this._rendererSize.height)
     this._domContainer.appendChild(this._renderer.domElement)
@@ -154,9 +158,6 @@ class SceneBase {
     this._clock = new Clock()
 
     this._setupScene()
-
-    
-    this._setupDebugCamera()
 
     // Load assets
     try {
@@ -171,6 +172,8 @@ class SceneBase {
     // LoaderManager.loadSmaa().then((assets) =>
     //   this._setupPostProcessing(assets)
     // );
+
+    this._setupPostProcessing()
 
     this._ready = true
 
@@ -193,11 +196,16 @@ class SceneBase {
     this._scene = new Scene()
 
     //this._scene.background =
-    this._fog = new Fog(BACKGROUND_COLOR, 0, 70)
+    this._fog = new Fog(this._backgroundColor, 0, 70)
     this._scene.fog = this._fog
 
     // Main Camera
-    this._camera = this._getMainCamera()
+    this._camera = this._setupMainCamera()
+
+    // Debug Camera
+    const [cameraDebug, cameraDebugControls] = this._setupDebugCamera()
+    this._cameraDebug = cameraDebug
+    this._cameraDebugControls = cameraDebugControls
 
     // Setup camera helper
     this._cameraHelper = new CameraHelper(this._camera)
@@ -205,18 +213,23 @@ class SceneBase {
     this._scene.add(this._cameraHelper)
   }
 
-  protected _initSceneObjects() {
-    // Add scene objects
-    this._sceneObjects = this._getSceneObjects()
-    this._sceneObjects.forEach((object) =>
-      this._scene.add(object?.sceneObject ? object.sceneObject : object)
-    )
-  }
-
-  protected _getSceneObjects(): any[] {
+  protected _getSceneObjects(): Array<BaseSceneObject | Object3D | Group | Mesh> {
     return []
   }
 
+  protected _initSceneObjects() {
+    // Add scene objects to scene from
+    this._sceneObjects = this._getSceneObjects()
+    this._sceneObjects.forEach((object3d) =>
+      this._scene.add(
+        object3d["sceneObject"]
+          ? object3d["sceneObject"]
+          : object3d["mesh"]
+          ? object3d["mesh"]
+          : object3d
+      )
+    )
+  }
   /**
    * Main camera
    * @param {number} fov
@@ -225,39 +238,39 @@ class SceneBase {
    * @param {Vector3} position
    * @returns {PerspectiveCamera}
    */
-  protected _getMainCamera(
+  protected _setupMainCamera(
     fov: number = 75,
     near: number = 0.1,
     far: number = 500,
-    position: Vector3 = new Vector3(0, 0, 5)
+    position: Vector3 = new Vector3(0, 0, 5),
+    rotation: Euler = new Euler(0, 0, 0)
   ): PerspectiveCamera {
     const screenRatio = this._rendererSize.width / this._rendererSize.height
     // TODO: add to config
     const camera = new PerspectiveCamera(fov, screenRatio, near, far)
     camera.position.copy(position)
+    camera.rotation.copy(rotation)
     return camera
   }
 
   /**
    * key "ctrl+d" to trigger debug camera
    */
-  protected _setupDebugCamera(): void {
+  protected _setupDebugCamera(): [PerspectiveCamera, OrbitControls] {
     // debug camera
-    this._cameraDebug = new PerspectiveCamera(
+    const cameraDebug = new PerspectiveCamera(
       45,
       this._rendererSize.width / this._rendererSize.height,
       1,
       10000
     )
-    this._cameraDebugControls = new OrbitControls(
-      // this._camera,
-      this._cameraDebug,
-      this._renderer.domElement
-    )
+    const cameraDebugControls = new OrbitControls(cameraDebug, this._renderer.domElement)
 
-    this._cameraDebug.position.set(0, 10, 50)
+    cameraDebug.position.set(0, 10, 50)
     // NOTE : controls.update() must be called after any manual changes to the camera's transform
-    this._cameraDebugControls.update()
+    cameraDebugControls.update()
+
+    return [cameraDebug, cameraDebugControls]
   }
 
   /**
@@ -287,7 +300,7 @@ class SceneBase {
     }
 
     if (this._sceneObjects.length > 0) {
-      this._sceneObjects.forEach((sceneObject, i) => {
+      this._sceneObjects.forEach((sceneObject: BaseSceneObject, i) => {
         if ("isDebug" in sceneObject) sceneObject.isDebug = sceneObject.isDebug || isDebug
       })
     }
@@ -295,26 +308,56 @@ class SceneBase {
     this._domContainer.parentElement.style.zIndex = isDebug ? "1" : "0"
   }
 
+  // TODO: move outside
   /**
    * [_setupPostProcessing description]
    */
-  // protected _setupPostProcessing(smaaAssets): void {
-  //   const context = this._renderer.getContext();
+  protected _setupPostProcessing(): void {
+    const context = this._renderer.getContext()
 
-  //   if (
-  //     typeof (context as WebGL2RenderingContext).MAX_SAMPLES !== "undefined"
-  //   ) {
-  //     const MAX_SAMPLES = context.getParameter(
-  //       (context as WebGL2RenderingContext).MAX_SAMPLES
-  //     );
-  //     this._composer = new EffectComposer(this._renderer, {
-  //       multisampling: Math.min(8, MAX_SAMPLES),
-  //     });
-  //   } else {
-  //     this._composer = new EffectComposer(this._renderer);
-  //   }
+    if (typeof (context as WebGL2RenderingContext).MAX_SAMPLES !== "undefined") {
+      const MAX_SAMPLES = context.getParameter(
+        (context as WebGL2RenderingContext).MAX_SAMPLES
+      )
+      this._composer = new EffectComposer(this._renderer, {
+        multisampling: Math.min(8, MAX_SAMPLES),
+      })
+    } else {
+      this._composer = new EffectComposer(this._renderer)
+    }
 
-  // }
+    const renderPass = new RenderPass(this._scene, this._camera)
+
+    // Depth of field
+    const depthOfFieldEffect = new DepthOfFieldEffect(this._camera, {
+      focusDistance: 0.1,
+      focalLength: 0.1,
+      bokehScale: 2.5,
+    })
+
+    depthOfFieldEffect.blurPass.resolution.scale = 1
+
+    // Bloom
+    const bloomEffect = new BloomEffect(this._scene, this._camera)
+
+    // SMAA
+    const smaaEffect = new SMAAEffect()
+    smaaEffect.edgeDetectionMaterial.setEdgeDetectionThreshold(0.005)
+
+    const smaaPass = new EffectPass(this._camera, smaaEffect)
+    // TODO: temp remove effect not used for now. Need to check if view 3d models and anim need those
+    const bloomPass = new EffectPass(this._camera, bloomEffect)
+    const depthOfFieldPass = new EffectPass(this._camera, depthOfFieldEffect)
+
+    // this._composer.addPass(worldPositionPass);
+    // Set all effect pass for composer render
+    this._composer.addPass(renderPass)
+    this._composer.addPass(smaaPass)
+    this._composer.addPass(bloomPass)
+    this._composer.addPass(depthOfFieldPass)
+
+    this._composerReady = true
+  }
 
   /**
    * [updateProjectionMatrix description]
@@ -338,9 +381,11 @@ class SceneBase {
       // required if controls.enableDamping or controls.autoRotate are set to true
       this._cameraDebugControls.update()
     } else {
-      //if (!this._composerReady) return;
-      //this._composer.render(this.deltaTime);
-      this._renderer.render(this.scene, this.camera)
+      if (sceneConfig.hasPostProcessing) {
+        if (this._composerReady) this._composer.render(this.deltaTime)
+      } else {
+        this._renderer.render(this.scene, this.camera)
+      }
     }
   }
 
@@ -358,7 +403,8 @@ class SceneBase {
 
     // Do loop stuff here
     this._sceneObjects.forEach(
-      (sceneObject) => sceneObject.loop && sceneObject.loop(this._deltaTime)
+      (sceneObject: BaseSceneObject) =>
+        sceneObject.loop && sceneObject.loop(this._deltaTime, elapsedTime)
     )
   }
 

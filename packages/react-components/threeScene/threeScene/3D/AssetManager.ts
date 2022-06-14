@@ -7,10 +7,12 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js"
 import EventEmitter from "events"
 import pathJoin from "./helpers/pathJoin"
 import debug from "@wbe/debug"
+import sceneConfig from "./data/sceneConfig"
 const log = debug(`front:3D:AssetManager`)
 
+// TODO: file type from file name extension
 // TODO: add to config
-const BASE_PATH = import.meta.env.BASE_URL
+const BASE_PATH = sceneConfig.assets3dBasePath
 const BASE64_PLACEHOLDER_IMAGE =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVQYV2NgYAAAAAMAAWgmWQ0AAAAASUVORK5CYII="
 
