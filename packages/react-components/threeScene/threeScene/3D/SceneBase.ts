@@ -16,10 +16,14 @@ import {
 } from "three"
 import { OrbitControls } from "./utils/controls/OrbitControls"
 import threeDevToolBrowserPlugin from "./helpers/threeDevToolBrowserPlugin"
-// import {
-//   EffectComposer,
-//   EffectPass
-// } from "postprocessing";
+import {
+  BloomEffect,
+  SMAAEffect,
+  EffectComposer,
+  EffectPass,
+  RenderPass,
+  DepthOfFieldEffect,
+} from "postprocessing"
 
 import PerformanceWatcher from "./PerformanceWatcher"
 import AssetManager, { IFile } from "./AssetManager"
@@ -151,6 +155,7 @@ class SceneBase {
 
     this._setupScene()
 
+    
     this._setupDebugCamera()
 
     // Load assets
