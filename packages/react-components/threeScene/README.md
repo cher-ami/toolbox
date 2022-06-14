@@ -38,9 +38,10 @@ const App = () => {
 - [postprocessing](https://www.npmjs.com/package/postprocessing)
 - [tweakpane](https://www.npmjs.com/package/tweakpane)
 - [@tweakpane/core](https://www.npmjs.com/package/@tweakpane/core)
+- [@wbe/debug](https://www.npmjs.com/package/@wbe/debug)
 
 Install all dependencies : 
-`npm i three lodash.throttle events postprocessing tweakpane @tweakpane/core`
+`npm i three lodash.throttle events postprocessing tweakpane @tweakpane/core @wbe/debug`
 
 ## props
 
