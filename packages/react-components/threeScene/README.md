@@ -1,9 +1,10 @@
 # React ThreeSCene
 
 A react component for instanciating a base [Three.js](https://threejs.org/) scene with :
+
 - Basic postprocessing (disabled by default)
 - An assetmanager to load 3d assets with corresponding loaders
-- [Scene objects architecture](./3D/sceneObjects/) with "in-object" controls : 
+- [Scene objects architecture](./3D/sceneObjects/) with "in-object" controls :
 - Debug mode with camera orbit control
 - Gui with [tweakpane](https://www.npmjs.com/package/tweakpane)
 - Basic env lighting
@@ -13,7 +14,7 @@ A react component for instanciating a base [Three.js](https://threejs.org/) scen
 Copy / past the component folder in your React project:
 
 ```tsx
-import ThreeScene from "./threeScene/ThreeScene"
+import ThreeScene from "./threeScene/ThreeScene";
 
 const App = () => {
   return (
@@ -21,13 +22,24 @@ const App = () => {
       <ThreeScene
         isVisible={true}
         isPaused={false}
+        assets3d={myAssetsData}
         onSceneIsReady={() => {
-          log("Three scene is ready")
+          log("Three scene is ready");
         }}
       />
     </div>
   );
 };
+```
+
+### Loading shaders files .frag & .vert
+
+Add module declaration from `global.d.ts`
+
+You can then load a shader file like :
+
+```javascript
+import frag from "./test.frag?raw";
 ```
 
 ## Dependencies
@@ -40,23 +52,25 @@ const App = () => {
 - [@tweakpane/core](https://www.npmjs.com/package/@tweakpane/core)
 - [@wbe/debug](https://www.npmjs.com/package/@wbe/debug)
 
-Install all dependencies : 
+Install all dependencies :
 `npm i three lodash.throttle events postprocessing tweakpane @tweakpane/core @wbe/debug`
 
 ## props
 
 > (\* no optional props)
 
-| props        | type                  | description                                                              | default value |
-| ------------ | --------------------- | ------------------------------------------------------------------------ | ------------- |
-| isPaused     | `boolean`             | If scene is paused                                                       | `false`           |
-| isVisible    | `boolean`             | If scene is visible                                                      | `false`           |
-| onSceneIsReady | `void`             | Callback when scene is ready                                              | ` `           |
-| className    | `string`              | Class name on root element                                               | `""`          |
+| props          | type      | description                  | default value |
+| -------------- | --------- | ---------------------------- | ------------- |
+| isPaused       | `boolean` | If scene is paused           | `false`       |
+| isVisible      | `boolean` | If scene is visible          | `false`       |
+| onSceneIsReady | `void`    | Callback when scene is ready | ` `           |
+| className      | `string`  | Class name on root element   | `""`          |
 
 ## Demo
+
 https://cherami-threejs-base-component.netlify.app/
 
 ## TODO
+
 - [ ] Add shader loader
 - [ ] Add gltf optimisation instructions
