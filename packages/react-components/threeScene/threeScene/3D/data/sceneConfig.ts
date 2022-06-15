@@ -11,7 +11,7 @@ const sceneConfig = {
     fovMobile: null,
     near: 0.1,
     far: 500,
-    position: new Vector3(0, 1.2, 3.5),
+    position: new Vector3(0, 0.5, 3.5),
     rotation: new Vector3(0, 0, 0),
   },
   hasEnvmap: false,

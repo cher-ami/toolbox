@@ -124,9 +124,15 @@ class SceneBase {
    * [init description]
    * @param domContainer [description]
    */
-  public async init(
-    domContainer: HTMLElement,
-    assetsData: IFile[]
+  public async init({
+    domContainer,
+    assetsData,
+    staticLoadersBasePath,
+  }: {
+    domContainer: HTMLDivElement;
+    assetsData: IFile[];
+    staticLoadersBasePath: string;
+  }
   ): Promise<void> {
     this._domContainer = domContainer;
 
@@ -167,6 +173,7 @@ class SceneBase {
     // Load assets
     try {
       if (assetsData && assetsData.length > 0)
+        await AssetManager.init({renderer: this._renderer, staticLoadersBasePath });
         await AssetManager.load(assetsData);
     } catch (error) {
       console.error("Failed to load asset", error);

@@ -22,6 +22,7 @@ import debug from "@wbe/debug";
 import sceneConfig from "./data/sceneConfig";
 import SampleGltfObject from "./sceneObjects/SampleGltfObject";
 import BaseSceneObject from "./sceneObjects/BaseSceneObject";
+import SamplePlaneObject from "./sceneObjects/SamplePlaneObject";
 
 const componentName = "SceneView";
 const log = debug(`front:3D:${componentName}`);
@@ -51,8 +52,20 @@ class SceneView extends SceneBase {
    * [init description]
    * @param domContainer [description]
    */
-  async init(domContainer: HTMLDivElement, assetsData: IFile[]): Promise<void> {
-    await super.init(domContainer, assetsData);
+  async init({
+    domContainer,
+    assetsData,
+    staticLoadersBasePath,
+  }: {
+    domContainer: HTMLDivElement;
+    assetsData: IFile[];
+    staticLoadersBasePath: string;
+  }): Promise<void> {
+    await super.init({
+      domContainer,
+      assetsData,
+      staticLoadersBasePath,
+    });
 
     this.canInteract = true;
 
@@ -109,8 +122,11 @@ class SceneView extends SceneBase {
     // Get sample object
     const sampleObject = new SampleObject();
 
-    // Get sample object
+    // Get sample gltf object
     const sampleGltfObject = new SampleGltfObject();
+
+    // Get sample plan object
+    const samplePlaneObject = new SamplePlaneObject();
 
     // HELPERS //
 
@@ -128,11 +144,13 @@ class SceneView extends SceneBase {
     this._helpersGroup.visible = false;
     [axisHelper, gridHelper].forEach((obj) => this._helpersGroup.add(obj));
 
+    // TODO: sceneobject as 3dobjects
     return [
       ambientLight,
       directionalLight,
       sampleObject,
       sampleGltfObject,
+      samplePlaneObject,
       this._helpersGroup,
     ];
   }

@@ -70,7 +70,36 @@ Install all dependencies :
 
 https://cherami-threejs-base-component.netlify.app/
 
-## TODO
+## Assets optimisations
 
-- [ ] Add shader loader
-- [ ] Add gltf optimisation instructions
+### GLTF/GLB
+
+Use [meshoptimiser](https://meshoptimizer.org/gltf/) to optimise and compress glb files. It includes .basis texture compression.
+
+- Installation : 
+```bash
+npm install -g gltfpack
+```
+
+- Compress a gltf : 
+```bash
+gltfpack -i ./input.gltf  -o ./output.glb -cc -tc -kn -km -tp
+```
+Details on options :  https://meshoptimizer.org/gltf/#options
+
+
+
+### Textures
+
+Use  [basis](https://medium.com/samsung-internet-dev/using-basis-textures-in-three-js-6eb7e104447d#:~:text=Textures%20in%20Three.-,js,and%20requires%20the%20latest%20THREE.)  compression under .ktx2 container : 
+
+- Install basis_universal
+```bash
+brew install basis_universal
+```
+
+- Convert a .png (not working with .jpg) :
+```bash
+bbasisu -y_flip -ktx2  -uastc -uastc_rdo_l 1.0 -mipmap input.png
+```
+Details on options : https://github.com/BinomialLLC/basis_universal#:~:text=basisu%20%2Duastc%20%2Duastc_level%202%20%2Duastc_rdo_l%20.75%20x.png

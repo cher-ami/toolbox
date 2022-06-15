@@ -42,18 +42,25 @@ function ThreeScene(props: IProps) {
   //const [sceneView, isReady] = useThreeSceneView({container, assets})
 
   useEffect(() => {
-    // Prepare asset data for 3d asset loader
-    const assetsData: IFile[] = props.assets3d;
-
-    // Instanciate new scene view
-    sceneViewRef.current = new SceneView();
     (async () => {
       try {
+        // Prepare asset data for 3d asset loader
+        const assetsData: IFile[] = props.assets3d;
+
+        // Instanciate new scene view
+        sceneViewRef.current = new SceneView();
+
         // init scene view
-        await sceneViewRef.current.init(webglContainerRef.current, assetsData);
+        await sceneViewRef.current.init({
+          domContainer: webglContainerRef.current,
+          assetsData,
+          // NOTE: base path to static loaders files here
+          staticLoadersBasePath: "./gltf/",
+        });
       } catch (error) {
         console.error(error);
       }
+
       // Start loop on assets and scene ready
       sceneViewRef.current.loop();
       setSceneIsReady(true);

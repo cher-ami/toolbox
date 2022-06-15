@@ -1,9 +1,11 @@
-import { LoadingManager, TextureLoader, Texture } from "three";
+import { LoadingManager, TextureLoader, Texture, WebGLRenderer } from "three";
 import { VideoTextureLoader } from "./helpers/VideoTextureLoader";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { TTFLoader } from "three/examples/jsm/loaders/TTFLoader.js";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
+import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader";
+import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 import EventEmitter from "events";
 import pathJoin from "./helpers/pathJoin";
 import debug from "@wbe/debug";
@@ -20,6 +22,7 @@ export enum EFileType {
   HDR = "hdr",
   VIDEO = "video",
   TTF = "ttf",
+  KTX2 = "ktx2",
 }
 
 export interface IFile {
@@ -42,17 +45,32 @@ export const LoaderType = {
   [EFileType.VIDEO]: VideoTextureLoader,
   [EFileType.IMAGE]: TextureLoader,
   [EFileType.HDR]: RGBELoader,
+  [EFileType.KTX2]: KTX2Loader,
   [EFileType.TTF]: TTFLoader,
 };
 
-class AssetManagerClass extends EventEmitter {
+class AssetManager extends EventEmitter {
   protected _assets: IFile[];
+  private _staticLoadersBasePath: string;
+  private _renderer: WebGLRenderer;
+  private _loaderInstances = {};
   get assets() {
     return this._assets;
   }
 
   constructor() {
     super();
+  }
+
+  init({
+    renderer,
+    staticLoadersBasePath,
+  }: {
+    renderer: WebGLRenderer;
+    staticLoadersBasePath: string;
+  }) {
+    this._staticLoadersBasePath = staticLoadersBasePath;
+    this._renderer = renderer;
   }
 
   // TODO: add basis loader https://threejs.org/docs/#examples/en/loaders/BasisTextureLoader
@@ -66,7 +84,7 @@ class AssetManagerClass extends EventEmitter {
     // Set to array if single file
     const filesData = Array.isArray(fileData) ? fileData : [fileData];
     this._assets = [];
-    let loaderInstances = {};
+    this._loaderInstances = {};
     const loadingManager = new LoadingManager();
 
     // Create placeholder image for texture fallback
@@ -78,13 +96,30 @@ class AssetManagerClass extends EventEmitter {
       filesData.forEach((fileData) => {
         const fileType = this._getFileTypeFromAsset(fileData.path);
 
-        // init loader from file type
-        loaderInstances[fileType] =
-          fileType in loaderInstances
-            ? loaderInstances[fileType]
-            : new LoaderType[fileType](loadingManager);
+        // Init loader from file type
+        if (!(fileType in this._loaderInstances)) {
+          const currentLoaderInstance = new LoaderType[fileType](
+            loadingManager
+          );
+          // switch set side loaders for corresponding file type
+          switch (fileType) {
+            case EFileType.GLTF:
+              this._setGLTFSideLoaders(currentLoaderInstance);
+              break;
+            case EFileType.KTX2:
+              this._setKTX2LoaderDependencies(
+                currentLoaderInstance,
+                this._renderer
+              );
+              break;
+            default:
+              break;
+          }
 
-        if (!loaderInstances[fileType])
+          this._loaderInstances[fileType] = currentLoaderInstance;
+        }
+
+        if (!this._loaderInstances[fileType])
           console.error("Three Loader model type not found from", fileType);
 
         // add filedata base data to asset list
@@ -96,7 +131,7 @@ class AssetManagerClass extends EventEmitter {
         const fileId = this._getFileId(fileData);
 
         // load file
-        loaderInstances[fileType].load(
+        this._loaderInstances[fileType].load(
           fileUrl,
           (asset) => {
             fileData.data = asset;
@@ -162,12 +197,18 @@ class AssetManagerClass extends EventEmitter {
         return EFileType.GLTF;
       case "glb":
         return EFileType.GLTF;
-      case "hdr":
-        return EFileType.HDR;
       case "png":
         return EFileType.IMAGE;
       case "jpg":
         return EFileType.IMAGE;
+      case "gif":
+        return EFileType.IMAGE;
+      case "dds":
+        return EFileType.IMAGE;
+      case "hdr":
+        return EFileType.HDR;
+      case "ktx2":
+        return EFileType.KTX2;
       case "webm":
         return EFileType.VIDEO;
       case "mp4":
@@ -193,8 +234,45 @@ class AssetManagerClass extends EventEmitter {
     const fileName = fileData.path.split("/").pop();
     return fileData.id || fileName.split(".").shift();
   }
+
+  // -------------------------------------------------------------------------------- SIDE LOADERS
+
+  private _setGLTFSideLoaders(GLTFLoaderInstance: GLTFLoader) {
+    const DRACOLoader = this._getDracoLoader();
+    const BASISLoader = this._getBasisLoader(this._renderer);
+    GLTFLoaderInstance.setCrossOrigin("anonymous")
+      .setDRACOLoader(DRACOLoader)
+      .setKTX2Loader(BASISLoader)
+      .setMeshoptDecoder(MeshoptDecoder);
+  }
+
+  private _setKTX2LoaderDependencies(
+    currentLoaderInstance: KTX2Loader,
+    renderer: WebGLRenderer
+  ) {
+    currentLoaderInstance
+      .setTranscoderPath(pathJoin(this._staticLoadersBasePath, "/basis") + "/")
+      .detectSupport(renderer);
+  }
+
+  private _getDracoLoader(): DRACOLoader {
+    // Configure and create Draco decoder.
+    const dracoLoader = new DRACOLoader();
+    const decoderPath = pathJoin(this._staticLoadersBasePath, "/draco" + "/");
+    dracoLoader.setDecoderPath(decoderPath);
+    dracoLoader.setDecoderConfig({ type: "js" });
+    return dracoLoader;
+  }
+
+  private _getBasisLoader(renderer: WebGLRenderer): KTX2Loader {
+    const ktx2Loader =
+      EFileType.KTX2 in this._loaderInstances
+        ? this._loaderInstances[EFileType.KTX2]
+        : new KTX2Loader();
+    this._setKTX2LoaderDependencies(ktx2Loader, renderer);
+    this._loaderInstances[EFileType.KTX2] = ktx2Loader;
+    return ktx2Loader;
+  }
 }
 
-const AssetManager = new AssetManagerClass();
-
-export default AssetManager;
+export default new AssetManager();
