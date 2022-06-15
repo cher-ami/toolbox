@@ -11,7 +11,7 @@ class SampleObject extends BaseSceneObject {
   }
 
   createMesh() {
-    const gltfData: GLTF = AssetManager.getAsset("model-spot").asset as GLTF;
+    const gltfData: GLTF = AssetManager.getAsset("model-spot").data as GLTF;
     this.sceneObject = gltfData.scene
     this.sceneObject.name = componentName
     this.sceneObject.position.set(0, 0.5, 0)

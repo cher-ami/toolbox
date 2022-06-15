@@ -2,7 +2,6 @@ import css from "./ThreeScene.module.less";
 import React, { useEffect, useRef, useState } from "react";
 import throttle from "lodash.throttle";
 import { IFile } from "./3D/AssetManager";
-import assets3dData from "./3D/data/assets3dData";
 import SceneView from "./3D/SceneView";
 import debug from "@wbe/debug";
 
@@ -10,6 +9,7 @@ interface IProps {
   className?: string;
   isVisible?: boolean;
   isPaused?: boolean;
+  assets3d: IFile[];
   onSceneIsReady?: () => void;
 }
 
@@ -43,7 +43,7 @@ function ThreeScene(props: IProps) {
 
   useEffect(() => {
     // Prepare asset data for 3d asset loader
-    const assetsData: IFile[] = assets3dData;
+    const assetsData: IFile[] = props.assets3d;
 
     // Instanciate new scene view
     sceneViewRef.current = new SceneView();
