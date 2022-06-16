@@ -30,6 +30,7 @@ If a tool or component can be customized only via parameters, it should not have
 - [cookies-banner](packages/react-components/cookies-banner)
 - [marquee](packages/react-components/marquee)
 - [slider](packages/react-components/slider)
+- [sprite-animator](packages/react-components/sprite)
 - [custom-cursor](packages/react-components/custom-cursor)
 - [@wbe/lazy-image](https://github.com/willybrauner/lazy-image) ↗
 - [@wbe/react-video](https://github.com/willybrauner/react-libraries/tree/main/packages/react-components/react-video) ↗
