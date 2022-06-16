@@ -30,8 +30,6 @@ If a tool or component can be customized only via parameters, it should not have
 - [cookies-banner](packages/react-components/cookies-banner)
 - [marquee](packages/react-components/marquee)
 - [slider](packages/react-components/slider)
-- [sprite-animator](packages/react-components/sprite)
-- [custom-cursor](packages/react-components/custom-cursor)
 - [@wbe/lazy-image](https://github.com/willybrauner/lazy-image) ↗
 - [@wbe/react-video](https://github.com/willybrauner/react-libraries/tree/main/packages/react-components/react-video) ↗
 - [@wbe/react-transition](https://github.com/willybrauner/react-libraries/tree/main/packages/react-components/react-transition) ↗
@@ -39,17 +37,18 @@ If a tool or component can be customized only via parameters, it should not have
 ### react-hooks
 
 - [use-is-handheld-and-landscape](packages/react-hooks/use-is-handheld-and-landscape)
-- [@wbe/use-window-size](https://github.com/willybrauner/react-libraries/tree/main/packages/react-hooks/use-window-size) ↗
-- [@wbe/use-did-update](https://github.com/willybrauner/react-libraries/tree/main/packages/react-hooks/use-did-update) ↗
-- [@react-hook/media-query](https://github.com/jaredLunde/react-hook/tree/master/packages/media-query) ↗
+- [rooks](https://react-hooks.org/) ↗ (React hooks collection) 
 
 ### react-routing
 
 - [@cher-ami/router](https://github.com/cher-ami/router) ↗
 
+
 ### managers
 
-- [@cher-ami/transition-manager](https://github.com/cher-ami/transitions-manager) ↗
+- [custom-cursor](packages/managers/custom-cursor)
+- [sprite-animator](packages/managers/sprite-animator)
+- [@cher-ami/transitions-manager](https://github.com/cher-ami/transitions-manager) ↗
 - [@cher-ami/smooth-scroll](https://github.com/cher-ami/smooth-scroll) ↗
 - [@cher-ami/audio-manager](https://github.com/cher-ami/audio-manager) ↗
 
@@ -60,6 +59,7 @@ If a tool or component can be customized only via parameters, it should not have
 - [@wbe/debug](https://github.com/willybrauner/debug) ↗
 - [@wbe/deferred-promise](https://github.com/willybrauner/deferred-promise) ↗
 - [@solid-js/signal](https://github.com/solid-js/solid/tree/master/libraries/iso-signal) ↗
+- [splitting](https://splitting.js.org/) ↗ (split text)
 
 ## Credits
 
