@@ -1,49 +1,40 @@
-import { Mesh, Group, BufferGeometry, Material } from "three"
+import { Mesh, Group, BufferGeometry, Material, Object3D } from "three";
 
+class BaseSceneObject extends Object3D {
+  sceneObject: Mesh<BufferGeometry, Material | Material[]> | Group;
 
-// TODO:  extend 3dObject
-class BaseSceneObject {
-  sceneObject: Mesh<BufferGeometry, Material | Material[]> | Group
+  geometry: BufferGeometry;
+  material: any;
 
-  geometry: BufferGeometry
-  material: any
-
-  _isDebug: boolean
+  _isDebug: boolean;
   get isDebug() {
-    return this._isDebug
+    return this._isDebug;
   }
   set isDebug(value) {
-    this._isDebug = value
+    this._isDebug = value;
   }
 
-  _isPaused: boolean
+  _isPaused: boolean;
   get isPaused() {
-    return this._isPaused
+    return this._isPaused;
   }
   set isPaused(value) {
-    this._isPaused = value
-  }
-
-  _isVisible: boolean
-  get isVisible() {
-    return this._isVisible
-  }
-  set isVisible(value) {
-    this._isVisible = value
-    this.sceneObject.visible = value
+    this._isPaused = value;
   }
 
   constructor() {
-    this.createMesh()
+    super();
+    this.createMesh();
+    this.add(this.sceneObject);
   }
   createMesh() {
-    this.sceneObject = new Mesh()
+    this.sceneObject = new Mesh();
   }
 
   // Auto loop in loops
   loop(deltaTime?: number, elapsedTime?: number) {
-    if (this._isPaused) return
+    if (this._isPaused) return;
   }
 }
 
-export { BaseSceneObject as default }
+export { BaseSceneObject as default };
