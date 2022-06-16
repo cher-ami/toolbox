@@ -1,10 +1,20 @@
-import { Vector3 } from "three"
+import { Vector3 } from "three";
 const sceneConfig = {
   assets3dBasePath: import.meta.env.BASE_URL,
-  hasPostProcessing: false,
-  sceneRender: {
-    backgroundColor: 0xf1f2f3,
-    hasBackgroundEnv: false,
+  sceneEnvBackground: {
+    enabled: true,
+    show: false,
+    color: 0xf1f2f3,
+  },
+  sceneFog: {
+    enabled: true,
+    color: null, // take background color by default
+    near: 0,
+    far: 300,
+  },
+  postprocessing: {
+    enabled: false,
+    smaaEnabled: true,
   },
   mainCamera: {
     fov: 75,
@@ -14,8 +24,5 @@ const sceneConfig = {
     position: new Vector3(0, 0.5, 3.5),
     rotation: new Vector3(0, 0, 0),
   },
-  hasEnvmap: false,
-  hasBackground: false,
-  backgroundColor: 0xffffff,
-}
-export default sceneConfig
+};
+export default sceneConfig;

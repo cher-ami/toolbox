@@ -15,7 +15,6 @@ import {
 import SceneBase from "./SceneBase";
 import AssetManager, { IFile } from "./AssetManager";
 import isMobile from "./utils/isMobile";
-import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
 import { Pane } from "tweakpane";
 import SampleObject from "./sceneObjects/SampleObject";
 import debug from "@wbe/debug";
@@ -40,8 +39,7 @@ class SceneView extends SceneBase {
   constructor() {
     super();
 
-    this._backgroundColor = new Color(sceneConfig.sceneRender.backgroundColor);
-
+    // NOTE: if scene is not interactive remove mouse and raycaster
     this.mouse = new Vector2(-100, -100); // set mouse first position offset to prevent first raycast
 
     // add exemple for raycaster
@@ -109,9 +107,12 @@ class SceneView extends SceneBase {
     BaseSceneObject | Object3D | Group | Mesh
   > {
     // Setup scene env map
-    if (sceneConfig.hasEnvmap) {
-      this._setupEnvMap(sceneConfig.sceneRender.hasBackgroundEnv);
+    if (sceneConfig.sceneEnvBackground.enabled) {
+      this._setupEnvMap(sceneConfig.sceneEnvBackground.show);
     }
+
+    // SAMPLE SCENE //
+    // NOTE: add your scene objects here (you can remove sample objects and lights)
 
     // Ambient light
     const ambientLight = new AmbientLight(0xffffff, 1);
@@ -144,7 +145,6 @@ class SceneView extends SceneBase {
     this._helpersGroup.visible = false;
     [axisHelper, gridHelper].forEach((obj) => this._helpersGroup.add(obj));
 
-    // TODO: sceneobject as 3dobjects
     return [
       ambientLight,
       directionalLight,
@@ -153,20 +153,6 @@ class SceneView extends SceneBase {
       samplePlaneObject,
       this._helpersGroup,
     ];
-  }
-
-  // TODO: add to helpers
-  getModelFromGltf(gltf: GLTF, name: string): Mesh | Group | Object3D {
-    function findNode(name, array) {
-      for (const node of array) {
-        if (node.name === name) return node;
-        if (node.children) {
-          const child = findNode(name, node.children);
-          if (child) return child;
-        }
-      }
-    }
-    return findNode(name, gltf?.scene?.children);
   }
 
   /**
@@ -205,9 +191,10 @@ class SceneView extends SceneBase {
   private _initPane(): void {
     this._pane = new Pane();
     const paneDefaultParams = {
-      Postprocessing: sceneConfig.hasPostProcessing,
+      Postprocessing: sceneConfig.postprocessing.enabled,
       "Show helpers": false,
       "Debug Sample Object": false,
+      "Show scene envmap": false,
       "Activate debug": "ctrl+d or in url #debug",
     };
     // Create main folder
@@ -219,10 +206,12 @@ class SceneView extends SceneBase {
       this._helpersGroup.visible = ev.value;
     });
     f1.addInput(paneDefaultParams, "Postprocessing").on("change", (ev) => {
-      sceneConfig.hasPostProcessing = ev.value;
+      sceneConfig.postprocessing.enabled = ev.value;
+    });
+    f1.addInput(paneDefaultParams, "Show scene envmap").on("change", (ev) => {
+      this._scene.background = ev.value ? this._scene.environment : null;
     });
     f1.addInput(paneDefaultParams, "Activate debug");
-    // TODO: add background visible
 
     // update z index
     document.querySelector(".tp-dfwv")["style"].zIndex = 1000;

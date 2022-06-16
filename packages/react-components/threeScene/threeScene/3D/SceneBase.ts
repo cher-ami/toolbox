@@ -1,4 +1,3 @@
-// TODO: import types
 import {
   PerspectiveCamera,
   Scene,
@@ -17,14 +16,6 @@ import {
 } from "three";
 import { OrbitControls } from "./utils/controls/OrbitControls";
 import threeDevToolBrowserPlugin from "./helpers/threeDevToolBrowserPlugin";
-import {
-  BloomEffect,
-  SMAAEffect,
-  EffectComposer,
-  EffectPass,
-  RenderPass,
-  DepthOfFieldEffect,
-} from "postprocessing";
 
 import PerformanceWatcher from "./PerformanceWatcher";
 import AssetManager, { IFile } from "./AssetManager";
@@ -32,10 +23,9 @@ import debug from "@wbe/debug";
 import { limitNumberRange } from "./utils/limitNumberRange";
 import BaseSceneObject from "./sceneObjects/BaseSceneObject";
 import sceneConfig from "./data/sceneConfig";
+import PostProcessing from "./PostProcessing";
 
 // TODO: add https://github.com/pmndrs/detect-gpu
-// TODO : add camera controls
-// TODO: let it optional
 
 const componentName = "SceneBase";
 const log = debug(`front:3D:${componentName}`);
@@ -51,9 +41,6 @@ export const BASE_RENDERER_SIZE = {
   height: window.innerHeight,
 };
 export const BACKGROUND_COLOR = 0xf1f2f3;
-
-// TODO: postprocessing conditional
-// TODO: all scene specific params outside
 
 class SceneBase {
   protected _domContainer: HTMLElement;
@@ -101,8 +88,7 @@ class SceneBase {
 
   protected _resizeObserver: ResizeObserver;
 
-  protected _composer: any; // EffectComposer
-  protected _composerReady: boolean = false;
+  protected _postprocessing: PostProcessing; // EffectComposer
 
   public performance: PerformanceWatcher;
 
@@ -113,7 +99,7 @@ class SceneBase {
    */
   constructor() {
     this._isDebugSceneActive = window.location.hash === "#debug";
-    this._backgroundColor = new Color(0xffffff);
+    this._backgroundColor = new Color(sceneConfig.sceneEnvBackground.color);
 
     this.performance = new PerformanceWatcher();
 
@@ -132,8 +118,7 @@ class SceneBase {
     domContainer: HTMLDivElement;
     assetsData: IFile[];
     staticLoadersBasePath: string;
-  }
-  ): Promise<void> {
+  }): Promise<void> {
     this._domContainer = domContainer;
 
     // set renderer size from node container
@@ -173,20 +158,22 @@ class SceneBase {
     // Load assets
     try {
       if (assetsData && assetsData.length > 0)
-        await AssetManager.init({renderer: this._renderer, staticLoadersBasePath });
-        await AssetManager.load(assetsData);
+        await AssetManager.init({
+          renderer: this._renderer,
+          staticLoadersBasePath,
+        });
+      await AssetManager.load(assetsData);
     } catch (error) {
       console.error("Failed to load asset", error);
     }
 
     this._initSceneObjects();
 
-    // Add smaa in post processing
-    // LoaderManager.loadSmaa().then((assets) =>
-    //   this._setupPostProcessing(assets)
-    // );
-
-    this._setupPostProcessing();
+    this._postprocessing = new PostProcessing({
+      renderer: this._renderer,
+      scene: this._scene,
+      camera: this._camera,
+    });
 
     this._ready = true;
 
@@ -211,8 +198,14 @@ class SceneBase {
     this._scene = new Scene();
 
     //this._scene.background =
-    this._fog = new Fog(this._backgroundColor, 0, 70);
-    this._scene.fog = this._fog;
+    if (sceneConfig.sceneFog.enabled) {
+      this._fog = new Fog(
+        sceneConfig.sceneFog.color || this._backgroundColor,
+        sceneConfig.sceneFog.near,
+        sceneConfig.sceneFog.far
+      );
+      this._scene.fog = this._fog;
+    }
 
     // Main Camera
     this._camera = this._setupMainCamera();
@@ -239,9 +232,11 @@ class SceneBase {
     this._sceneObjects = this._getSceneObjects();
     this._sceneObjects.forEach((object3d) =>
       this._scene.add(
+        // check if object3d is BaseSceneObject
         object3d["sceneObject"]
-          ? object3d["sceneObject"]
-          : object3d["mesh"]
+          ? object3d
+          : // if not, check if object3d has mesh
+          object3d["mesh"]
           ? object3d["mesh"]
           : object3d
       )
@@ -329,58 +324,6 @@ class SceneBase {
     this._domContainer.parentElement.style.zIndex = isDebug ? "1" : "0";
   }
 
-  // TODO: move outside
-  /**
-   * [_setupPostProcessing description]
-   */
-  protected _setupPostProcessing(): void {
-    const context = this._renderer.getContext();
-
-    if (
-      typeof (context as WebGL2RenderingContext).MAX_SAMPLES !== "undefined"
-    ) {
-      const MAX_SAMPLES = context.getParameter(
-        (context as WebGL2RenderingContext).MAX_SAMPLES
-      );
-      this._composer = new EffectComposer(this._renderer, {
-        multisampling: Math.min(8, MAX_SAMPLES),
-      });
-    } else {
-      this._composer = new EffectComposer(this._renderer);
-    }
-
-    const renderPass = new RenderPass(this._scene, this._camera);
-
-    // Depth of field
-    const depthOfFieldEffect = new DepthOfFieldEffect(this._camera, {
-      focusDistance: 0.013,
-      focalLength: 0.025,
-      bokehScale: 3,
-    });
-
-    depthOfFieldEffect.blurPass.resolution.scale = 1;
-
-    // Bloom
-    const bloomEffect = new BloomEffect(this._scene, this._camera);
-
-    // SMAA
-    const smaaEffect = new SMAAEffect();
-
-    const smaaPass = new EffectPass(this._camera, smaaEffect);
-    // TODO: temp remove effect not used for now. Need to check if view 3d models and anim need those
-    const bloomPass = new EffectPass(this._camera, bloomEffect);
-    const depthOfFieldPass = new EffectPass(this._camera, depthOfFieldEffect);
-
-    // this._composer.addPass(worldPositionPass);
-    // Set all effect pass for composer render
-    this._composer.addPass(renderPass);
-    this._composer.addPass(smaaPass);
-    this._composer.addPass(bloomPass);
-    this._composer.addPass(depthOfFieldPass);
-
-    this._composerReady = true;
-  }
-
   /**
    * [updateProjectionMatrix description]
    */
@@ -405,8 +348,8 @@ class SceneBase {
       // required if controls.enableDamping or controls.autoRotate are set to true
       this._cameraDebugControls.update();
     } else {
-      if (sceneConfig.hasPostProcessing) {
-        if (this._composerReady) this._composer.render(this.deltaTime);
+      if (sceneConfig.postprocessing.enabled) {
+        if (this._postprocessing.composerReady) this._postprocessing.composer.render(this.deltaTime);
       } else {
         this._renderer.render(this.scene, this.camera);
       }
