@@ -73,8 +73,6 @@ class AssetManager extends EventEmitter {
     this._renderer = renderer;
   }
 
-  // TODO: add basis loader https://threejs.org/docs/#examples/en/loaders/BasisTextureLoader
-
   /**
    * Loads scene assets.
    *

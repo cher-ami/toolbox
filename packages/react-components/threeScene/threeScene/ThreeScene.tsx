@@ -86,10 +86,6 @@ function ThreeScene(props: IProps) {
 
   // --------------------------------------------------------------------------- INPUT EVENTS
 
-  /**
-   * WHEEL & MOUSE
-   */
-
   useEffect(() => {
     if (!sceneIsReady) return;
 
