@@ -37,9 +37,7 @@ If a tool or component can be customized only via parameters, it should not have
 ### react-hooks
 
 - [use-is-handheld-and-landscape](packages/react-hooks/use-is-handheld-and-landscape)
-- [@wbe/use-window-size](https://github.com/willybrauner/react-libraries/tree/main/packages/react-hooks/use-window-size) ↗
-- [@wbe/use-did-update](https://github.com/willybrauner/react-libraries/tree/main/packages/react-hooks/use-did-update) ↗
-- [@react-hook/media-query](https://github.com/jaredLunde/react-hook/tree/master/packages/media-query) ↗
+- [rooks](https://react-hooks.org/) ↗ (React hooks collection) 
 
 ### react-routing
 
@@ -50,7 +48,7 @@ If a tool or component can be customized only via parameters, it should not have
 
 - [custom-cursor](packages/managers/custom-cursor)
 - [sprite-animator](packages/managers/sprite-animator)
-- [@cher-ami/transition-manager](https://github.com/cher-ami/transitions-manager) ↗
+- [@cher-ami/transitions-manager](https://github.com/cher-ami/transitions-manager) ↗
 - [@cher-ami/smooth-scroll](https://github.com/cher-ami/smooth-scroll) ↗
 - [@cher-ami/audio-manager](https://github.com/cher-ami/audio-manager) ↗
 
