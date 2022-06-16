@@ -11,6 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "@tweakpane/core": "^1.0.9",
+    "@types/three": "^0.140.0",
     "@wbe/debug": "^1.0.0",
     "@wbe/use-window-size": "^2.4.0",
     "events": "^3.3.0",

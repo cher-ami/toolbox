@@ -53,7 +53,7 @@ import frag from "./test.frag?raw";
 - [@wbe/debug](https://www.npmjs.com/package/@wbe/debug)
 
 Install all dependencies :
-`npm i three lodash.throttle events postprocessing tweakpane @tweakpane/core @wbe/debug`
+`npm i three @types/three0.140 lodash.throttle events postprocessing tweakpane @tweakpane/core @wbe/debug`
 
 ## props
 
@@ -76,30 +76,34 @@ https://cherami-threejs-base-component.netlify.app/
 
 Use [meshoptimiser](https://meshoptimizer.org/gltf/) to optimise and compress glb files. It includes .basis texture compression.
 
-- Installation : 
+- Installation :
+
 ```bash
 npm install -g gltfpack
 ```
 
-- Compress a gltf : 
+- Compress a gltf :
+
 ```bash
 gltfpack -i ./input.gltf  -o ./output.glb -cc -tc -kn -km -tp
 ```
-Details on options :  https://meshoptimizer.org/gltf/#options
 
-
+Details on options : https://meshoptimizer.org/gltf/#options
 
 ### Textures
 
-Use  [basis](https://medium.com/samsung-internet-dev/using-basis-textures-in-three-js-6eb7e104447d#:~:text=Textures%20in%20Three.-,js,and%20requires%20the%20latest%20THREE.)  compression under .ktx2 container : 
+Use [basis](https://medium.com/samsung-internet-dev/using-basis-textures-in-three-js-6eb7e104447d#:~:text=Textures%20in%20Three.-,js,and%20requires%20the%20latest%20THREE.) compression under .ktx2 container :
 
 - Install basis_universal
+
 ```bash
 brew install basis_universal
 ```
 
 - Convert a .png (not working with .jpg) :
+
 ```bash
-bbasisu -y_flip -ktx2  -uastc -uastc_rdo_l 1.0 -mipmap input.png
+basisu -y_flip -ktx2  -uastc -uastc_rdo_l 1.0 -mipmap input.png
 ```
+
 Details on options : https://github.com/BinomialLLC/basis_universal#:~:text=basisu%20%2Duastc%20%2Duastc_level%202%20%2Duastc_rdo_l%20.75%20x.png
