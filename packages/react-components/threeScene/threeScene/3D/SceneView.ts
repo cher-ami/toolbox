@@ -19,6 +19,11 @@ import { Pane } from "tweakpane";
 import SampleObject from "./sceneObjects/SampleObject";
 import debug from "@wbe/debug";
 import sceneConfig from "./data/sceneConfig";
+
+// NOTE: remove if no interactive camera used
+import CameraControler from "./CameraControler";
+
+// NOTE: sample objects, remove if no use
 import SampleGltfObject from "./sceneObjects/SampleGltfObject";
 import BaseSceneObject from "./sceneObjects/BaseSceneObject";
 import SamplePlaneObject from "./sceneObjects/SamplePlaneObject";
@@ -32,6 +37,7 @@ class SceneView extends SceneBase {
   raycaster: Raycaster;
   canInteract: any;
   mouse: Vector2;
+  mainCameraControler: CameraControler;
 
   /**
    * [constructor description]
@@ -65,6 +71,12 @@ class SceneView extends SceneBase {
       staticLoadersBasePath,
     });
 
+    if (sceneConfig.mainCamera.isControlable) {
+      this._setupCameraControls();
+    }
+
+    // NOTE : do your init stuff here before scene is ready and can be interacted
+
     this.canInteract = true;
 
     this._onSceneReady();
@@ -72,6 +84,17 @@ class SceneView extends SceneBase {
     // TODO
     //process.env.NODE_ENV === "development" && this._initPane()
     this._initPane();
+  }
+
+  /**
+   * Setup camera controls
+   */
+  private _setupCameraControls() {
+    this.mainCameraControler = new CameraControler(
+      this.camera,
+      this.renderer.domElement,
+      sceneConfig.mainCamera.controlMode
+    );
   }
 
   /**
@@ -195,6 +218,7 @@ class SceneView extends SceneBase {
       "Show helpers": false,
       "Debug Sample Object": false,
       "Show scene envmap": false,
+      "Switch camera mode": sceneConfig.mainCamera.controlMode,
       "Activate debug": "ctrl+d or in url #debug",
     };
     // Create main folder
@@ -211,6 +235,16 @@ class SceneView extends SceneBase {
     f1.addInput(paneDefaultParams, "Show scene envmap").on("change", (ev) => {
       this._scene.background = ev.value ? this._scene.environment : null;
     });
+    if (sceneConfig.mainCamera.isControlable) {
+      f1.addInput(paneDefaultParams, "Switch camera mode", {
+        options: {
+          orbit: "orbit",
+          firstPerson: "firstPerson",
+        },
+      }).on("change", (ev) => {
+        this.mainCameraControler.setMode(ev.value);
+      });
+    }
     f1.addInput(paneDefaultParams, "Activate debug");
 
     // update z index
@@ -239,17 +273,26 @@ class SceneView extends SceneBase {
   /**
    * scene view loop
    */
-  public loop(elapsedTime?: number): void {
-    super.loop(elapsedTime);
+  public loop(deltaTime?: number): void {
+    super.loop(deltaTime);
+
+    // NOTE: remove if you don't need to have interactive camera
+    // Update camera controls
+    if (sceneConfig.mainCamera.isControlable) {
+      this.mainCameraControler.loop(deltaTime);
+    }
 
     // NOTE : Add your loops here
 
-    // clear the buffer, then render the background
+    // ...
+
+    // Clear the buffer, then render the background
     this.renderer.clear();
 
-    // clear depth buffer, so that the rest of the scene is drawn on top
+    // Clear depth buffer, so that the rest of the scene is drawn on top
     this.renderer.clearDepth();
-    // render the rest of the scene
+
+    // Render the rest of the scene
     this.render();
 
     this.performance.end();
@@ -260,6 +303,8 @@ class SceneView extends SceneBase {
    */
   public destroy(): void {
     super.destroy();
+    // Dispose camera controls
+    if (this.mainCameraControler) this.mainCameraControler.dispose();
     // Dispose the pane
     if (this._pane) this._pane.dispose();
   }

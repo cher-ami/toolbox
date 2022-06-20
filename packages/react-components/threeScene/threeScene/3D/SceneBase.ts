@@ -14,7 +14,6 @@ import {
   Object3D,
   Group,
 } from "three";
-import { OrbitControls } from "./utils/controls/OrbitControls";
 import threeDevToolBrowserPlugin from "./helpers/threeDevToolBrowserPlugin";
 
 import PerformanceWatcher from "./PerformanceWatcher";
@@ -23,7 +22,10 @@ import debug from "@wbe/debug";
 import { limitNumberRange } from "./utils/limitNumberRange";
 import BaseSceneObject from "./sceneObjects/BaseSceneObject";
 import sceneConfig from "./data/sceneConfig";
+// NOTE: Remove if not using postprocessing
 import PostProcessing from "./PostProcessing";
+import cleanMaterial from "./helpers/cleanMaterial";
+import CameraControler from "./CameraControler";
 
 // TODO: add https://github.com/pmndrs/detect-gpu
 
@@ -42,6 +44,11 @@ export const BASE_RENDERER_SIZE = {
 };
 export const BACKGROUND_COLOR = 0xf1f2f3;
 
+/**
+ * Bare minimum to setup a three scene with a camera and a renderer
+ * in context of the threeScene react component
+ * @class SceneBase
+ */
 class SceneBase {
   protected _domContainer: HTMLElement;
   protected _renderer: WebGLRenderer;
@@ -69,7 +76,7 @@ class SceneBase {
 
   protected _centerCoords: { x: number; y: number };
 
-  protected _cameraDebugControls: OrbitControls;
+  protected _cameraDebugControls: CameraControler;
   protected _cameraHelper: CameraHelper;
 
   protected _clock: Clock;
@@ -80,9 +87,6 @@ class SceneBase {
   protected _rafId: number;
   protected _resizeThrottled: () => {};
   protected _loopBinded: () => void;
-
-  // TODO: remove
-  //protected _passes: {}
 
   protected _ready: boolean = false;
 
@@ -95,7 +99,8 @@ class SceneBase {
   public paused: boolean = false;
 
   /**
-   * [constructor description]
+   * Constructor of the scene base class (threeScene)
+   * @constructor SceneBase
    */
   constructor() {
     this._isDebugSceneActive = window.location.hash === "#debug";
@@ -146,7 +151,7 @@ class SceneBase {
     );
 
     // Tone mapping
-    //this._renderer.toneMapping = ReinhardToneMapping // Advised tone mapping for realistic rendering
+    //this._renderer.toneMapping = ReinhardToneMapping // NOTE: Advised tone mapping for realistic rendering
 
     this._renderer.setSize(this._rendererSize.width, this._rendererSize.height);
     this._domContainer.appendChild(this._renderer.domElement);
@@ -169,6 +174,7 @@ class SceneBase {
 
     this._initSceneObjects();
 
+    // NOTE: remove if not using postprocessing
     this._postprocessing = new PostProcessing({
       renderer: this._renderer,
       scene: this._scene,
@@ -210,15 +216,15 @@ class SceneBase {
     // Main Camera
     this._camera = this._setupMainCamera();
 
-    // Debug Camera
-    const [cameraDebug, cameraDebugControls] = this._setupDebugCamera();
-    this._cameraDebug = cameraDebug;
-    this._cameraDebugControls = cameraDebugControls;
-
     // Setup camera helper
     this._cameraHelper = new CameraHelper(this._camera);
     this._cameraHelper.visible = false;
     this._scene.add(this._cameraHelper);
+
+    // Debug Camera
+    const [cameraDebug, cameraDebugControls] = this._setupDebugCamera();
+    this._cameraDebug = cameraDebug;
+    this._cameraDebugControls = cameraDebugControls;
   }
 
   protected _getSceneObjects(): Array<
@@ -258,9 +264,9 @@ class SceneBase {
     rotation: Euler = new Euler(0, 0, 0)
   ): PerspectiveCamera {
     const screenRatio = this._rendererSize.width / this._rendererSize.height;
-    // TODO: add to config
     const camera = new PerspectiveCamera(fov, screenRatio, near, far);
     camera.position.copy(position);
+    window["__CAMERA_POSITION"] = camera.position;
     camera.rotation.copy(rotation);
     return camera;
   }
@@ -268,7 +274,7 @@ class SceneBase {
   /**
    * key "ctrl+d" to trigger debug camera
    */
-  protected _setupDebugCamera(): [PerspectiveCamera, OrbitControls] {
+  protected _setupDebugCamera(): [PerspectiveCamera, CameraControler] {
     // debug camera
     const cameraDebug = new PerspectiveCamera(
       45,
@@ -276,14 +282,15 @@ class SceneBase {
       1,
       10000
     );
-    const cameraDebugControls = new OrbitControls(
+    cameraDebug.position.set(0, 10, 40);
+    const cameraDebugControls = new CameraControler(
       cameraDebug,
-      this._renderer.domElement
+      this._renderer.domElement,
+      "orbit"
     );
 
-    cameraDebug.position.set(0, 10, 50);
     // NOTE : controls.update() must be called after any manual changes to the camera's transform
-    cameraDebugControls.update();
+    //cameraDebugControls.loop(0);
 
     return [cameraDebug, cameraDebugControls];
   }
@@ -346,10 +353,11 @@ class SceneBase {
     if (this._isDebugSceneActive) {
       this._renderer.render(this.scene, this._cameraDebug);
       // required if controls.enableDamping or controls.autoRotate are set to true
-      this._cameraDebugControls.update();
+      this._cameraDebugControls.loop(this.deltaTime);
     } else {
       if (sceneConfig.postprocessing.enabled) {
-        if (this._postprocessing.composerReady) this._postprocessing.composer.render(this.deltaTime);
+        if (this._postprocessing && this._postprocessing.composerReady)
+          this._postprocessing.composer.render(this.deltaTime);
       } else {
         this._renderer.render(this.scene, this.camera);
       }
@@ -385,26 +393,13 @@ class SceneBase {
     }
   };
 
-  // TODO: add to helpers
-  cleanMaterial(material) {
-    debug("dispose material " + material.name);
-    material.dispose();
-
-    // dispose textures
-    for (const key of Object.keys(material)) {
-      const value = material[key];
-      if (value && typeof value === "object" && "minFilter" in value) {
-        value.dispose();
-      }
-    }
-  }
-
   /**
    * [destroy description]
    */
   public destroy(): void {
     cancelAnimationFrame(this._rafId);
     window.removeEventListener("resize", this._resize.bind(this));
+    if (this._postprocessing) this._postprocessing.dispose();
     this._renderer.dispose();
     this._renderer.domElement.remove();
     this._renderer.renderLists.dispose();
@@ -416,11 +411,11 @@ class SceneBase {
       object.geometry.dispose();
 
       if (object.material.isMaterial) {
-        this.cleanMaterial(object.material);
+        cleanMaterial(object.material);
       } else {
         // an array of materials
         for (const material of object["material"] as unknown as Material[])
-          this.cleanMaterial(material);
+          cleanMaterial(material);
       }
     });
 
