@@ -45,6 +45,9 @@ class PostProcessing {
     this.composerReady = true;
   }
 
+  /**
+   * Init composer for post processing
+   */
   protected _initComposer() {
     const context = this._renderer.getContext();
 
@@ -62,6 +65,9 @@ class PostProcessing {
     }
   }
 
+  /**
+   * Setup post processing effects for the scene
+   */
   protected _setupEffects() {
     // SMAA
     this.smaaEffect = new SMAAEffect({ preset: SMAAPreset.MEDIUM });
@@ -80,6 +86,9 @@ class PostProcessing {
     });
   }
 
+  /**
+   * Setup post processing passes for the scene
+   */
   protected _setupPasses() {
     const renderPass = new RenderPass(this._scene, this._camera);
 
@@ -95,6 +104,13 @@ class PostProcessing {
     this.composer.addPass(smaaPass);
     this.composer.addPass(bloomPass);
     this.composer.addPass(depthOfFieldPass);
+  }
+
+  /**
+   * Dispose post processing passes for the scene
+   */
+  public dispose() {
+    this.composer.dispose();
   }
 }
 
