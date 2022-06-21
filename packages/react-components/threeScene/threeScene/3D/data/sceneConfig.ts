@@ -23,10 +23,13 @@ const sceneConfig: ISceneConfig = {
     fovMobile: null,
     near: 0.1,
     far: 500,
-    position: new Vector3(0, 0.5, 4.5), //new Vector3(0, 0.5, 3.5),
+    position: new Vector3(0, 0.5, 5), //new Vector3(0, 0.5, 3.5),
     rotation: new Euler(0, 0, 0),
     isControlable: true,
     controlMode: "orbit",
+  },
+  debug: {
+    hasGui: true,
   },
 };
 

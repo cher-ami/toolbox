@@ -188,7 +188,7 @@ class SceneBase {
     );
     resizeObserver.observe(this._domContainer);
 
-    this.setDebugMode(this._isDebugSceneActive);
+    this._setDebugMode(this._isDebugSceneActive);
 
     // Listen to debug event
     this._listenEventDebug();
@@ -288,9 +288,7 @@ class SceneBase {
       this._renderer.domElement,
       "orbit"
     );
-
-    // NOTE : controls.update() must be called after any manual changes to the camera's transform
-    //cameraDebugControls.loop(0);
+    cameraDebugControls.enabled = this._isDebugSceneActive;
 
     return [cameraDebug, cameraDebugControls];
   }
@@ -301,7 +299,7 @@ class SceneBase {
   private _listenEventDebug() {
     window.addEventListener("keydown", (e) => {
       if (e.ctrlKey && e.key === "d") {
-        this.setDebugMode(!this._isDebugSceneActive);
+        this._setDebugMode(!this._isDebugSceneActive);
       }
     });
   }
@@ -309,9 +307,12 @@ class SceneBase {
   /**
    * Set scene debug mode
    */
-  protected setDebugMode(isDebug: boolean): void {
+  protected _setDebugMode(isDebug: boolean): void {
     this._isDebugSceneActive = isDebug;
+
+    // camera switch
     this._cameraHelper.visible = isDebug;
+    this._cameraDebugControls.enabled = isDebug;
 
     if (this._scene?.fog) {
       if (isDebug) {

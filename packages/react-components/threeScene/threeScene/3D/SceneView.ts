@@ -48,7 +48,7 @@ class SceneView extends SceneBase {
     // NOTE: if scene is not interactive remove mouse and raycaster
     this.mouse = new Vector2(-100, -100); // set mouse first position offset to prevent first raycast
 
-    // add exemple for raycaster
+    //  TODO: add exemple for raycaster
     this.raycaster = new Raycaster();
   }
 
@@ -76,14 +76,13 @@ class SceneView extends SceneBase {
     }
 
     // NOTE : do your init stuff here before scene is ready and can be interacted
+    // ...
 
     this.canInteract = true;
 
     this._onSceneReady();
 
-    // TODO
-    //process.env.NODE_ENV === "development" && this._initPane()
-    this._initPane();
+    if (sceneConfig.debug.hasGui) this._initPane();
   }
 
   /**
@@ -192,9 +191,27 @@ class SceneView extends SceneBase {
     const intersects = this.raycaster.intersectObjects(this._scene.children);
   }
 
-  /**
-   * INTERACT EVENT HANDLERS
-   */
+  private _browserSpecs(): void {
+    if (isMobile) {
+      // do mobile stuff adaptation here
+    }
+  }
+
+  private _onSceneReady(): void {
+    // this._initPane()
+
+    this._browserSpecs();
+
+    // All things in scene are ready
+    debug("Load Complete");
+  }
+
+  private _handleMobile() {
+    debug("mobile : " + isMobile);
+  }
+
+  // TODO: scene base
+  // --------------------------------------------------------------------------------  INTERACT EVENT HANDLERS
 
   onMouseMove(event) {
     this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -205,6 +222,14 @@ class SceneView extends SceneBase {
 
   onClick(event) {
     this._raycastSceneObjects();
+  }
+
+  // --------------------------------------------------------------------------------  DEBUG
+
+  protected _setDebugMode(isDebug: boolean): void {
+    super._setDebugMode(isDebug);
+
+    if (this.mainCameraControler) this.mainCameraControler.enabled = !isDebug;
   }
 
   /**
@@ -251,24 +276,7 @@ class SceneView extends SceneBase {
     document.querySelector(".tp-dfwv")["style"].zIndex = 1000;
   }
 
-  private _browserSpecs(): void {
-    if (isMobile) {
-      // do mobile stuff adaptation here
-    }
-  }
-
-  private _onSceneReady(): void {
-    // this._initPane()
-
-    this._browserSpecs();
-
-    // All things in scene are ready
-    debug("Load Complete");
-  }
-
-  private _handleMobile() {
-    debug("mobile : " + isMobile);
-  }
+  // --------------------------------------------------------------------------------  LOOP & RENDER
 
   /**
    * scene view loop
@@ -278,7 +286,7 @@ class SceneView extends SceneBase {
 
     // NOTE: remove if you don't need to have interactive camera
     // Update camera controls
-    if (sceneConfig.mainCamera.isControlable) {
+    if (sceneConfig.mainCamera.isControlable && this.mainCameraControler) {
       this.mainCameraControler.loop(deltaTime);
     }
 

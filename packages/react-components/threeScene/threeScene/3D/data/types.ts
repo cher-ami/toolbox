@@ -9,6 +9,11 @@ export interface ISceneConfig {
   sceneFog: ISceneFog;
   postprocessing: IPostprocessing;
   mainCamera: IMainCamera;
+  debug: IDebug;
+}
+
+export interface IDebug {
+  hasGui: boolean;
 }
 
 export interface ISceneEnvBackground {

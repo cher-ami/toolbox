@@ -58,6 +58,15 @@ class CameraControler {
     return this._mode;
   }
 
+  private _enabled: boolean = true;
+  set enabled(enabled: boolean) {
+    this.controls.enabled = enabled;
+    this._enabled = enabled;
+  }
+  get enabled(): boolean {
+    return this._enabled;
+  }
+
   constructor(
     camera: PerspectiveCamera | OrthographicCamera,
     rendererDomContainer: HTMLElement,
@@ -125,6 +134,7 @@ class CameraControler {
   }
 
   loop(deltaTime: number) {
+    if (!this._enabled) return;
     // update camera controls
     this.hasControlsUpdated = this.controls.update(deltaTime);
   }

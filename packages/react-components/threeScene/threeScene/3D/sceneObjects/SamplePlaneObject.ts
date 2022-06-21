@@ -40,7 +40,7 @@ class SamplePlaneObject extends BaseSceneObject {
     this.sceneObject = new Mesh(this.geometry, this.material);
     this.sceneObject.name = componentName;
 
-    this.sceneObject.position.set(-2, 0, 2);
+    this.sceneObject.position.set(-3, 0, 2);
   }
 
   // Auto loop in loops

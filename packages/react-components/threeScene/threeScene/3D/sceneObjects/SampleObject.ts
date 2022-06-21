@@ -37,7 +37,7 @@ class SampleObject extends BaseSceneObject {
     this.sceneObject.name = componentName;
 
     this.sceneObject.scale.set(0.5, 0.5, 0.5);
-    this.sceneObject.position.set(2, 0, 2);
+    this.sceneObject.position.set(3, 0, 2);
   }
 
   // Auto loop in loops
