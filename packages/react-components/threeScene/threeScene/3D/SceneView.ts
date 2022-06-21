@@ -11,9 +11,13 @@ import {
   Texture,
   DirectionalLight,
   Color,
+  Intersection,
+  BufferGeometry,
+  Material,
+  MeshStandardMaterial,
 } from "three";
 import SceneBase from "./SceneBase";
-import AssetManager, { IFile } from "./AssetManager";
+import AssetManager, { IFile } from "./managers/AssetManager";
 import isMobile from "./utils/isMobile";
 import { Pane } from "tweakpane";
 import SampleObject from "./sceneObjects/SampleObject";
@@ -21,12 +25,13 @@ import debug from "@wbe/debug";
 import sceneConfig from "./data/sceneConfig";
 
 // NOTE: remove if no interactive camera used
-import CameraControler from "./CameraControler";
+import CameraManager from "./managers/CameraManager";
 
 // NOTE: sample objects, remove if no use
 import SampleGltfObject from "./sceneObjects/SampleGltfObject";
 import BaseSceneObject from "./sceneObjects/BaseSceneObject";
 import SamplePlaneObject from "./sceneObjects/SamplePlaneObject";
+import TransformControlManager from "./managers/TransformControlManager";
 
 const componentName = "SceneView";
 const log = debug(`front:3D:${componentName}`);
@@ -37,7 +42,10 @@ class SceneView extends SceneBase {
   raycaster: Raycaster;
   canInteract: any;
   mouse: Vector2;
-  mainCameraControler: CameraControler;
+  mainCameraControler: CameraManager;
+  private _transformControlHelper: TransformControlManager;
+  private _mainObjectsGroup: Group;
+  _intersectObject: any;
 
   /**
    * [constructor description]
@@ -89,7 +97,7 @@ class SceneView extends SceneBase {
    * Setup camera controls
    */
   private _setupCameraControls() {
-    this.mainCameraControler = new CameraControler(
+    this.mainCameraControler = new CameraManager(
       this.camera,
       this.renderer.domElement,
       sceneConfig.mainCamera.controlMode
@@ -142,6 +150,11 @@ class SceneView extends SceneBase {
     // Directional light
     const directionalLight = new DirectionalLight(0xffffff, 0.5);
 
+    // MAIN OBJECTS //
+
+    // NOTE : objects in this group are raycastable
+    this._mainObjectsGroup = new Group();
+
     // Get sample object
     const sampleObject = new SampleObject();
 
@@ -150,6 +163,10 @@ class SceneView extends SceneBase {
 
     // Get sample plan object
     const samplePlaneObject = new SamplePlaneObject();
+
+    [sampleObject, sampleGltfObject, samplePlaneObject].forEach((obj) =>
+      this._mainObjectsGroup.add(obj)
+    );
 
     // HELPERS //
 
@@ -161,6 +178,14 @@ class SceneView extends SceneBase {
     const divisions = 100;
     const gridHelper = new GridHelper(size, divisions);
 
+    // Transform  helper
+    this._transformControlHelper = new TransformControlManager({
+      camera: this._cameraDebug,
+      cameraControls: this._cameraDebugControls,
+      rendererDomContainer: this._domContainer,
+      transformableObjects: this._mainObjectsGroup.children,
+    });
+
     // Helper group objects
     this._helpersGroup = new Group();
     this._helpersGroup.name = "Helpers";
@@ -170,25 +195,10 @@ class SceneView extends SceneBase {
     return [
       ambientLight,
       directionalLight,
-      sampleObject,
-      sampleGltfObject,
-      samplePlaneObject,
+      this._mainObjectsGroup,
       this._helpersGroup,
+      this._transformControlHelper.controls,
     ];
-  }
-
-  /**
-   * Check objects on mouse position and interact with it
-   */
-  protected _raycastSceneObjects() {
-    if (!this.canInteract) return;
-    // update ray with camera and mouse position
-
-    this.raycaster.setFromCamera(this.mouse as Vector2, this.camera);
-
-    // calculate objects intersecting the picking ray
-    // NOTE : can be any objects in scene, more performant than raycast on all objects
-    const intersects = this.raycaster.intersectObjects(this._scene.children);
   }
 
   private _browserSpecs(): void {
@@ -217,63 +227,86 @@ class SceneView extends SceneBase {
     this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
     this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-    this._raycastSceneObjects();
+    const intersects = this._raycastSceneObjects();
+
+    if (intersects && intersects.length > 0) {
+    }
+    this._exampleHoverObjects(intersects);
   }
 
   onClick(event) {
     this._raycastSceneObjects();
-  }
 
-  // --------------------------------------------------------------------------------  DEBUG
-
-  protected _setDebugMode(isDebug: boolean): void {
-    super._setDebugMode(isDebug);
-
-    if (this.mainCameraControler) this.mainCameraControler.enabled = !isDebug;
+    if (this._intersectObject) {
+      this._exampleClickObject(this._intersectObject);
+    }
   }
 
   /**
-   * Init debug panel
-   * @returns void
+   * Check objects on mouse position and interact with it
    */
-  private _initPane(): void {
-    this._pane = new Pane();
-    const paneDefaultParams = {
-      Postprocessing: sceneConfig.postprocessing.enabled,
-      "Show helpers": false,
-      "Debug Sample Object": false,
-      "Show scene envmap": false,
-      "Switch camera mode": sceneConfig.mainCamera.controlMode,
-      "Activate debug": "ctrl+d or in url #debug",
-    };
-    // Create main folder
-    const f1 = this._pane.addFolder({
-      title: "Global parameters",
-      expanded: true,
-    });
-    f1.addInput(paneDefaultParams, "Show helpers").on("change", (ev) => {
-      this._helpersGroup.visible = ev.value;
-    });
-    f1.addInput(paneDefaultParams, "Postprocessing").on("change", (ev) => {
-      sceneConfig.postprocessing.enabled = ev.value;
-    });
-    f1.addInput(paneDefaultParams, "Show scene envmap").on("change", (ev) => {
-      this._scene.background = ev.value ? this._scene.environment : null;
-    });
-    if (sceneConfig.mainCamera.isControlable) {
-      f1.addInput(paneDefaultParams, "Switch camera mode", {
-        options: {
-          orbit: "orbit",
-          firstPerson: "firstPerson",
-        },
-      }).on("change", (ev) => {
-        this.mainCameraControler.setMode(ev.value);
-      });
-    }
-    f1.addInput(paneDefaultParams, "Activate debug");
+  protected _raycastSceneObjects(): Array<Intersection<Object3D>> {
+    if (!this.canInteract || this._isDebugSceneActive) return;
+    // update ray with camera and mouse position
 
-    // update z index
-    document.querySelector(".tp-dfwv")["style"].zIndex = 1000;
+    this.raycaster.setFromCamera(this.mouse as Vector2, this.camera);
+
+    // calculate objects intersecting the picking ray
+    // NOTE : can be any objects in scene, more performant than raycast on all objects
+    const intersects = this.raycaster.intersectObjects(
+      this._mainObjectsGroup.children.map((child) =>
+        child["sceneObject"] ? child["sceneObject"] : (null as Object3D)
+      ),
+      true
+    );
+
+    return intersects ? intersects : [];
+  }
+
+  // SAMPLE INTERACTIVE OBJECT METHODS //
+  // NOTE : methods for demo, remove this when you have your own interaction logic
+
+  private _exampleHoverObjects(
+    intersects: Array<Intersection<Object3D>>
+  ): void {
+    if (intersects && intersects.length > 0) {
+      if (this._intersectObject != intersects[0].object) {
+        if (this._intersectObject)
+          this._intersectObject.material.emissive.setHex(
+            this._intersectObject.currentHex
+          );
+
+        this._intersectObject = intersects[0].object;
+        this._intersectObject.currentHex =
+          this._intersectObject.material.emissive.getHex();
+        this._intersectObject.material.emissive.setHex(0xff0000);
+      }
+    } else {
+      if (this._intersectObject)
+        this._intersectObject.material.emissive.setHex(
+          this._intersectObject.currentHex
+        );
+
+      this._intersectObject = null;
+    }
+  }
+
+  private _exampleClickObject(clickedObject: any): void {
+    function getParentSceneObject(sceneObject: Object3D): Object3D {
+      if (sceneObject.parent) {
+        if (sceneObject.parent.name.includes("sceneObject")) {
+          return sceneObject.parent;
+        }
+        return getParentSceneObject(sceneObject.parent);
+      }
+    }
+    // get the object intersected
+    const sceneObject = clickedObject.name.includes("sceneObject")
+      ? clickedObject
+      : getParentSceneObject(clickedObject);
+
+    alert(`Clicked on ${sceneObject.name}`);
+    clickedObject.material.emissive.setHex(clickedObject.currentHex);
   }
 
   // --------------------------------------------------------------------------------  LOOP & RENDER
@@ -306,6 +339,8 @@ class SceneView extends SceneBase {
     this.performance.end();
   }
 
+  // --------------------------------------------------------------------------------  DISPOSE
+
   /**
    * destroy scene
    */
@@ -313,8 +348,141 @@ class SceneView extends SceneBase {
     super.destroy();
     // Dispose camera controls
     if (this.mainCameraControler) this.mainCameraControler.dispose();
+    // Dispose transform controler
+    if (this._transformControlHelper) this._transformControlHelper.dispose();
     // Dispose the pane
     if (this._pane) this._pane.dispose();
+  }
+
+  // --------------------------------------------------------------------------------  DEBUG
+
+  protected _setDebugMode(isDebug: boolean): void {
+    super._setDebugMode(isDebug);
+
+    // camera main controler
+    if (this.mainCameraControler) this.mainCameraControler.enabled = !isDebug;
+
+    // debug transform objects controler
+    if (this._transformControlHelper)
+      this._transformControlHelper.enabled = isDebug;
+  }
+
+  /**
+   * Init debug panel
+   * @returns void
+   */
+  private _initPane(): void {
+    this._pane = new Pane();
+    const paneDefaultParams = {
+      Postprocessing: sceneConfig.postprocessing.enabled,
+      "Show helpers": false,
+      "Show scene envmap": sceneConfig.sceneEnvBackground.enabled,
+      "Switch camera mode": sceneConfig.mainCamera.controlMode,
+      "Activate debug": "ctrl+d or in url #debug",
+    };
+    // Create main folder
+    const f1 = this._pane.addFolder({
+      title: "Global parameters",
+      expanded: true,
+    });
+    f1.addInput(paneDefaultParams, "Show helpers").on("change", (ev) => {
+      this._helpersGroup.visible = ev.value;
+    });
+    f1.addInput(paneDefaultParams, "Postprocessing").on("change", (ev) => {
+      sceneConfig.postprocessing.enabled = ev.value;
+    });
+    f1.addInput(paneDefaultParams, "Show scene envmap").on("change", (ev) => {
+      this._scene.background = ev.value ? this._scene.environment : null;
+    });
+    if (sceneConfig.mainCamera.isControlable) {
+      f1.addInput(paneDefaultParams, "Switch camera mode", {
+        options: {
+          orbit: "orbit",
+          firstPerson: "firstPerson",
+        },
+      }).on("change", (ev) => {
+        this.mainCameraControler.setMode(ev.value);
+      });
+    }
+    f1.addInput(paneDefaultParams, "Activate debug");
+
+    if (this._transformControlHelper) {
+      // Object transform folder
+      const f2 = this._pane.addFolder({
+        title: "Object transform",
+        expanded: true,
+      });
+      f2.hidden = true;
+
+      const objectTransforms = {
+        name: "",
+        position: { x: 0, y: 0, z: 0 },
+        rotation: { x: 0, y: 0, z: 0 },
+      };
+
+      f2.addMonitor(objectTransforms, "name");
+      f2.addInput(objectTransforms, "position").on("change", (e) => {
+        if (e.last) {
+          const { x, y, z } = e.value;
+          this._transformControlHelper.transformControlMesh.position.set(
+            x,
+            y,
+            z
+          );
+        }
+      });
+      f2.addInput(objectTransforms, "rotation").on("change", (e) => {
+        if (e.last) {
+          const { x, y, z } = e.value;
+          this._transformControlHelper.transformControlMesh.rotation.set(
+            x,
+            y,
+            z
+          );
+        }
+      });
+
+      this._transformControlHelper.controls.addEventListener("change", () => {
+        if (!this._transformControlHelper.transformControlMesh || !this._transformControlHelper.controls.object) {
+          f2.hidden = true;
+          return;
+        }
+        f2.hidden = false;
+        // set position
+        const {
+          x: posX,
+          y: posY,
+          z: posZ,
+        } = this._transformControlHelper.transformControlMesh.position;
+        // set rotation
+        objectTransforms.position = {
+          x: posX,
+          y: posY,
+          z: posZ,
+        };
+        const {
+          x: rotX,
+          y: rotY,
+          z: rotZ,
+        } = this._transformControlHelper.transformControlMesh.rotation;
+
+        objectTransforms.rotation = {
+          x: rotX,
+          y: rotY,
+          z: rotZ,
+        };
+
+        // set name
+        objectTransforms.name =
+          this._transformControlHelper.transformControlMesh.name;
+
+
+        // refresh pane
+        this._pane.refresh();
+      });
+    }
+    // update z index gui dom
+    document.querySelector(".tp-dfwv")["style"].zIndex = 1000;
   }
 }
 

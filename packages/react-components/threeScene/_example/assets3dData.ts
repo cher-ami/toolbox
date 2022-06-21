@@ -1,4 +1,4 @@
-import { EFileType, IFile } from "../threeScene/3D/AssetManager";
+import { EFileType, IFile } from "../threeScene/3D/managers/AssetManager";
 import damagedHelmet from "./assets/DamagedHelmet.glb?url";
 import testBasisTexture from "./assets/test-basis-texture.ktx2?url";
 import footprintCourt from "./assets/footprint_court.hdr?url";

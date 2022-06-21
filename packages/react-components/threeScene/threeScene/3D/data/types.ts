@@ -1,5 +1,5 @@
 import { Euler, Vector3 } from "three";
-import { TCameraControlMode } from "../CameraControler";
+import { TCameraControlMode } from "../managers/CameraManager";
 
 // ------------------------------------------------------------------------------------------------------------ SCENE CONFIG INTERFACE
 

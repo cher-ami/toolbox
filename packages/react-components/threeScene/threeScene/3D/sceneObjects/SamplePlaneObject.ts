@@ -7,12 +7,14 @@ import {
   DoubleSide,
   Texture,
   LinearFilter,
+  MeshPhongMaterial,
+  MeshLambertMaterial,
 } from "three";
 import BaseSceneObject from "./BaseSceneObject";
 import debug from "@wbe/debug";
-import AssetManager from "../AssetManager";
+import AssetManager from "../managers/AssetManager";
 
-const componentName = "SampleObject";
+const componentName = "SamplePlaneObject";
 const log = debug(`front:3D:${componentName}`);
 
 class SamplePlaneObject extends BaseSceneObject {
@@ -24,7 +26,7 @@ class SamplePlaneObject extends BaseSceneObject {
     // PlaneGeometry UVs assume flipY=true, which compressed textures don't support.
     this.geometry = new PlaneGeometry();
     //this.geometry = this._flipY(new PlaneGeometry());
-    this.material = new MeshBasicMaterial({
+    this.material = new MeshLambertMaterial({
       color: 0xffffff,
       side: DoubleSide,
     });
@@ -38,9 +40,12 @@ class SamplePlaneObject extends BaseSceneObject {
     this.material.needsUpdate = true;
 
     this.sceneObject = new Mesh(this.geometry, this.material);
-    this.sceneObject.name = componentName;
 
-    this.sceneObject.position.set(-3, 0, 2);
+    this.name = componentName;
+    this.sceneObject.name = componentName + "_sceneObject";
+
+    // Set transforms
+    this.position.set(-3, 0, 2);
   }
 
   // Auto loop in loops

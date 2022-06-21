@@ -14,7 +14,7 @@ import {
   PerspectiveCamera,
   OrthographicCamera,
 } from "three";
-import sceneConfig from "./data/sceneConfig";
+import sceneConfig from "../data/sceneConfig";
 
 // Get only what we need for camera controls
 const subsetOfTHREE = {
@@ -42,7 +42,7 @@ const EPS = 1e-5;
  * Controler for camera interactions and movements
  * @class CameraControler
  */
-class CameraControler {
+class CameraManager {
   camera: PerspectiveCamera | OrthographicCamera;
   rendererDomContainer: HTMLElement;
   controls: CameraControls;
@@ -106,7 +106,7 @@ class CameraControler {
     this.controls.polarRotateSpeed = 1;
     this.controls.truckSpeed = 2;
     this.controls.mouseButtons.wheel = CameraControls.ACTION.DOLLY;
-    this.controls.touches.two = CameraControls.ACTION.TOUCH_ZOOM_TRUCK;
+    this.controls.mouseButtons.right = CameraControls.ACTION.NONE;
 
     this.controls.moveTo(
       this.basePosition.x,
@@ -125,6 +125,7 @@ class CameraControler {
     this.controls.polarRotateSpeed = -0.3; // negative value to invert rotation direction
     this.controls.truckSpeed = 10;
     this.controls.mouseButtons.wheel = CameraControls.ACTION.ZOOM;
+    this.controls.mouseButtons.right = CameraControls.ACTION.NONE;
     this.controls.touches.two = CameraControls.ACTION.TOUCH_ZOOM_TRUCK;
 
     this.controls.moveTo(0, 0, EPS, false);
@@ -144,4 +145,4 @@ class CameraControler {
   }
 }
 
-export default CameraControler;
+export default CameraManager;

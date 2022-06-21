@@ -17,7 +17,7 @@ import {
 import threeDevToolBrowserPlugin from "./helpers/threeDevToolBrowserPlugin";
 
 import PerformanceWatcher from "./PerformanceWatcher";
-import AssetManager, { IFile } from "./AssetManager";
+import AssetManager, { IFile } from "./managers/AssetManager";
 import debug from "@wbe/debug";
 import { limitNumberRange } from "./utils/limitNumberRange";
 import BaseSceneObject from "./sceneObjects/BaseSceneObject";
@@ -25,7 +25,7 @@ import sceneConfig from "./data/sceneConfig";
 // NOTE: Remove if not using postprocessing
 import PostProcessing from "./PostProcessing";
 import cleanMaterial from "./helpers/cleanMaterial";
-import CameraControler from "./CameraControler";
+import CameraManager from "./managers/CameraManager";
 
 // TODO: add https://github.com/pmndrs/detect-gpu
 
@@ -76,7 +76,7 @@ class SceneBase {
 
   protected _centerCoords: { x: number; y: number };
 
-  protected _cameraDebugControls: CameraControler;
+  protected _cameraDebugControls: CameraManager;
   protected _cameraHelper: CameraHelper;
 
   protected _clock: Clock;
@@ -218,6 +218,7 @@ class SceneBase {
 
     // Setup camera helper
     this._cameraHelper = new CameraHelper(this._camera);
+    this._cameraHelper.name = "mainCameraHelper";
     this._cameraHelper.visible = false;
     this._scene.add(this._cameraHelper);
 
@@ -266,7 +267,6 @@ class SceneBase {
     const screenRatio = this._rendererSize.width / this._rendererSize.height;
     const camera = new PerspectiveCamera(fov, screenRatio, near, far);
     camera.position.copy(position);
-    window["__CAMERA_POSITION"] = camera.position;
     camera.rotation.copy(rotation);
     return camera;
   }
@@ -274,7 +274,7 @@ class SceneBase {
   /**
    * key "ctrl+d" to trigger debug camera
    */
-  protected _setupDebugCamera(): [PerspectiveCamera, CameraControler] {
+  protected _setupDebugCamera(): [PerspectiveCamera, CameraManager] {
     // debug camera
     const cameraDebug = new PerspectiveCamera(
       45,
@@ -283,7 +283,7 @@ class SceneBase {
       10000
     );
     cameraDebug.position.set(0, 10, 40);
-    const cameraDebugControls = new CameraControler(
+    const cameraDebugControls = new CameraManager(
       cameraDebug,
       this._renderer.domElement,
       "orbit"
@@ -378,10 +378,21 @@ class SceneBase {
     if (this.paused) return;
 
     // Do loop stuff here
-    this._sceneObjects.forEach(
-      (sceneObject: BaseSceneObject) =>
-        sceneObject.loop && sceneObject.loop(this._deltaTime, elapsedTime)
-    );
+    this._sceneObjects.forEach((sceneObject: BaseSceneObject) => {
+      const isGroup = sceneObject["isGroup"];
+      const loopObjects = (sceneObjects: Array<BaseSceneObject | Object3D>) =>
+        sceneObjects.forEach(
+          (sceneObject) =>
+            sceneObject["loop"] &&
+            sceneObject["loop"](this._deltaTime, elapsedTime)
+        );
+
+      if (isGroup) {
+        loopObjects(sceneObject.children);
+      } else {
+        loopObjects([sceneObject]);
+      }
+    });
   }
 
   /**
@@ -398,6 +409,7 @@ class SceneBase {
    * [destroy description]
    */
   public destroy(): void {
+    this.paused = true;
     cancelAnimationFrame(this._rafId);
     window.removeEventListener("resize", this._resize.bind(this));
     if (this._postprocessing) this._postprocessing.dispose();

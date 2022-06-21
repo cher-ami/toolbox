@@ -1,7 +1,7 @@
 import css from "./ThreeScene.module.less";
 import React, { useEffect, useRef, useState } from "react";
 import throttle from "lodash.throttle";
-import { IFile } from "./3D/AssetManager";
+import { IFile } from "./3D/managers/AssetManager";
 import SceneView from "./3D/SceneView";
 import debug from "@wbe/debug";
 
@@ -73,6 +73,7 @@ function ThreeScene(props: IProps) {
 
     return () => {
       sceneViewRef.current.destroy();
+      sceneViewRef.current = null;
     };
   }, []);
 

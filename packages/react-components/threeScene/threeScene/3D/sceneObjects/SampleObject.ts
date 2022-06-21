@@ -34,10 +34,13 @@ class SampleObject extends BaseSceneObject {
     });
 
     this.sceneObject = new Mesh(this.geometry, this.material);
-    this.sceneObject.name = componentName;
+    
+    this.name = componentName;
+    this.sceneObject.name = componentName + "_sceneObject";
 
-    this.sceneObject.scale.set(0.5, 0.5, 0.5);
-    this.sceneObject.position.set(3, 0, 2);
+    // Set transforms
+    this.scale.set(0.5, 0.5, 0.5);
+    this.position.set(3, 0, 2);
   }
 
   // Auto loop in loops

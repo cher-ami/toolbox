@@ -1,5 +1,5 @@
 import { LoadingManager, TextureLoader, Texture, WebGLRenderer } from "three";
-import { VideoTextureLoader } from "./helpers/VideoTextureLoader";
+import { VideoTextureLoader } from "../helpers/VideoTextureLoader";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { TTFLoader } from "three/examples/jsm/loaders/TTFLoader.js";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
@@ -7,9 +7,9 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 import { KTX2Loader } from "three/examples/jsm/loaders/KTX2Loader";
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 import EventEmitter from "events";
-import pathJoin from "./helpers/pathJoin";
+import pathJoin from "../helpers/pathJoin";
 import debug from "@wbe/debug";
-import sceneConfig from "./data/sceneConfig";
+import sceneConfig from "../data/sceneConfig";
 const log = debug(`front:3D:AssetManager`);
 
 const BASE_PATH = sceneConfig.assets3dBasePath;
@@ -23,6 +23,7 @@ export enum EFileType {
   VIDEO = "video",
   TTF = "ttf",
   KTX2 = "ktx2",
+  DRACO = "draco",
 }
 
 export interface IFile {
@@ -42,6 +43,7 @@ export enum EAssetManagerEvents {
 
 export const LoaderType = {
   [EFileType.GLTF]: GLTFLoader,
+  [EFileType.DRACO]: DRACOLoader,
   [EFileType.VIDEO]: VideoTextureLoader,
   [EFileType.IMAGE]: TextureLoader,
   [EFileType.HDR]: RGBELoader,
@@ -195,6 +197,8 @@ class AssetManager extends EventEmitter {
         return EFileType.GLTF;
       case "glb":
         return EFileType.GLTF;
+      case "drc":
+        return EFileType.DRACO;
       case "png":
         return EFileType.IMAGE;
       case "jpg":
@@ -255,7 +259,10 @@ class AssetManager extends EventEmitter {
 
   private _getDracoLoader(): DRACOLoader {
     // Configure and create Draco decoder.
-    const dracoLoader = new DRACOLoader();
+    const dracoLoader =
+      EFileType.DRACO in this._loaderInstances
+        ? this._loaderInstances[EFileType.DRACO]
+        : new DRACOLoader();
     const decoderPath = pathJoin(this._staticLoadersBasePath, "/draco" + "/");
     dracoLoader.setDecoderPath(decoderPath);
     dracoLoader.setDecoderConfig({ type: "js" });

@@ -1,4 +1,6 @@
-import { Mesh, Group, BufferGeometry, Material, Object3D } from "three";
+import { Mesh, Group, BufferGeometry, Material, Object3D, Box3 } from "three";
+
+const componentName = "BaseSceneObject";
 
 class BaseSceneObject extends Object3D {
   sceneObject: Mesh<BufferGeometry, Material | Material[]> | Group;
@@ -7,6 +9,7 @@ class BaseSceneObject extends Object3D {
   material: any;
 
   _isDebug: boolean;
+  componentName: string;
   get isDebug() {
     return this._isDebug;
   }
@@ -24,9 +27,11 @@ class BaseSceneObject extends Object3D {
 
   constructor() {
     super();
+    this.componentName = componentName;
     this.createMesh();
     this.add(this.sceneObject);
   }
+
   createMesh() {
     this.sceneObject = new Mesh();
   }
