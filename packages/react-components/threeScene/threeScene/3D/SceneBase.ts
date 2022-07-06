@@ -26,6 +26,7 @@ import sceneConfig from "./data/sceneConfig";
 import PostProcessing from "./PostProcessing";
 import cleanMaterial from "./helpers/cleanMaterial";
 import CameraManager from "./managers/CameraManager";
+import EventEmitter from "events";
 
 // TODO: add https://github.com/pmndrs/detect-gpu
 
@@ -49,10 +50,10 @@ export const BACKGROUND_COLOR = 0xf1f2f3;
  * in context of the threeScene react component
  * @class SceneBase
  */
-class SceneBase {
+class SceneBase extends EventEmitter {
   protected _domContainer: HTMLElement;
   protected _renderer: WebGLRenderer;
-  _sceneObjects: Array<BaseSceneObject | Object3D>;
+  _sceneObjects: Array<BaseSceneObject | Object3D> = [];
   protected _backgroundColor: Color;
   public get renderer() {
     return this._renderer;
@@ -103,6 +104,7 @@ class SceneBase {
    * @constructor SceneBase
    */
   constructor() {
+    super();
     this._isDebugSceneActive = window.location.hash === "#debug";
     this._backgroundColor = new Color(sceneConfig.sceneEnvBackground.color);
 
@@ -154,6 +156,7 @@ class SceneBase {
     //this._renderer.toneMapping = ReinhardToneMapping // NOTE: Advised tone mapping for realistic rendering
 
     this._renderer.setSize(this._rendererSize.width, this._rendererSize.height);
+
     this._domContainer.appendChild(this._renderer.domElement);
 
     this._clock = new Clock();
@@ -171,8 +174,6 @@ class SceneBase {
     } catch (error) {
       console.error("Failed to load asset", error);
     }
-
-    this._initSceneObjects();
 
     // NOTE: remove if not using postprocessing
     this._postprocessing = new PostProcessing({
@@ -197,13 +198,17 @@ class SceneBase {
     threeDevToolBrowserPlugin(this.renderer, this.scene);
   }
 
+  protected _prepare(): void {
+    this._initSceneObjects();
+  }
+
   /**
    * Setup main scene & elements
    */
   protected _setupScene(): void {
     this._scene = new Scene();
 
-    //this._scene.background =
+    this._scene.background = this._backgroundColor;
     if (sceneConfig.sceneFog.enabled) {
       this._fog = new Fog(
         sceneConfig.sceneFog.color || this._backgroundColor,
@@ -236,19 +241,15 @@ class SceneBase {
 
   protected _initSceneObjects() {
     // Add scene objects to scene from
-    this._sceneObjects = this._getSceneObjects();
-    this._sceneObjects.forEach((object3d) =>
-      this._scene.add(
-        // check if object3d is BaseSceneObject
-        object3d["sceneObject"]
-          ? object3d
-          : // if not, check if object3d has mesh
-          object3d["mesh"]
-          ? object3d["mesh"]
-          : object3d
-      )
-    );
+    const sceneObjects = this._getSceneObjects();
+    this._addSceneObjects(sceneObjects);
   }
+
+  protected _addSceneObjects(objects3d: Array<Object3D | Group>) {
+    this._sceneObjects = [...this._sceneObjects, ...objects3d];
+    objects3d.forEach((object3d) => this._scene.add(object3d));
+  }
+
   /**
    * Main camera
    * @param {number} fov
@@ -266,6 +267,7 @@ class SceneBase {
   ): PerspectiveCamera {
     const screenRatio = this._rendererSize.width / this._rendererSize.height;
     const camera = new PerspectiveCamera(fov, screenRatio, near, far);
+    camera.name = "mainCamera";
     camera.position.copy(position);
     camera.rotation.copy(rotation);
     return camera;
@@ -352,7 +354,7 @@ class SceneBase {
   public render() {
     // switch camera when render for debug
     if (this._isDebugSceneActive) {
-      this._renderer.render(this.scene, this._cameraDebug);
+      this._renderer.render(this._scene, this._cameraDebug);
       // required if controls.enableDamping or controls.autoRotate are set to true
       this._cameraDebugControls.loop(this.deltaTime);
     } else {
@@ -360,7 +362,7 @@ class SceneBase {
         if (this._postprocessing && this._postprocessing.composerReady)
           this._postprocessing.composer.render(this.deltaTime);
       } else {
-        this._renderer.render(this.scene, this.camera);
+        this._renderer.render(this._scene, this.camera);
       }
     }
   }
@@ -368,14 +370,13 @@ class SceneBase {
   /**
    * [loop description]
    */
-  public loop(elapsedTime?): void {
+  public loop(elapsedTime?): boolean {
     this.performance.start();
     this._deltaTime = this._clock.getDelta();
     this._rafId = requestAnimationFrame(this._loopBinded);
     this._renderer.info.reset();
 
-    if (!this._ready) return;
-    if (this.paused) return;
+    if (!this._ready || this.paused) return false;
 
     // Do loop stuff here
     this._sceneObjects.forEach((sceneObject: BaseSceneObject) => {
@@ -393,6 +394,8 @@ class SceneBase {
         loopObjects([sceneObject]);
       }
     });
+
+    return true;
   }
 
   /**
@@ -409,14 +412,21 @@ class SceneBase {
    * [destroy description]
    */
   public destroy(): void {
+    // stop raf
     this.paused = true;
     cancelAnimationFrame(this._rafId);
+
+    // remove events
     window.removeEventListener("resize", this._resize.bind(this));
+    this.removeAllListeners();
+
+    // dispose graphics
     if (this._postprocessing) this._postprocessing.dispose();
     this._renderer.dispose();
     this._renderer.domElement.remove();
     this._renderer.renderLists.dispose();
 
+    // dispose scene elements
     this._scene.traverse((object: Mesh<BufferGeometry, Material>) => {
       if (!object.isMesh) return;
 
