@@ -3,11 +3,15 @@
 A react component for instanciating a base [Three.js](https://threejs.org/) scene with :
 
 - Basic postprocessing (disabled by default)
-- An assetmanager to load 3d assets with corresponding loaders
+- An assetmanager to load 3d assets with corresponding loaders :
+ - Gltf support meshoptimise extension and draco
+ - Basis texture support (.ktx2)
 - [Scene objects architecture](./3D/sceneObjects/) with "in-object" controls :
 - Debug mode with camera orbit control
 - Gui with [tweakpane](https://www.npmjs.com/package/tweakpane)
 - Basic env lighting
+- Camera manager with two modes : `orbit control`, `first person`
+- Transform control in debug mode
 
 ## Usage
 
@@ -32,6 +36,10 @@ const App = () => {
 };
 ```
 
+### Adding custom loaders static .js
+
+Copy content of `publicAsset` in your `public` folder and set path to `SceneView` init constructor parameter `staticLoadersBasePath`
+
 ### Loading shaders files .frag & .vert
 
 Add module declaration from `global.d.ts`
@@ -51,9 +59,10 @@ import frag from "./test.frag?raw";
 - [tweakpane](https://www.npmjs.com/package/tweakpane)
 - [@tweakpane/core](https://www.npmjs.com/package/@tweakpane/core)
 - [@wbe/debug](https://www.npmjs.com/package/@wbe/debug)
+- [camera-controls](https://www.npmjs.com/package/camera-controls)
 
 Install all dependencies :
-`npm i three @types/three0.140 lodash.throttle events postprocessing tweakpane @tweakpane/core @wbe/debug`
+`npm i three @types/three0.140 lodash.throttle events camera-controls postprocessing tweakpane @tweakpane/core @wbe/debug`
 
 ## props
 
