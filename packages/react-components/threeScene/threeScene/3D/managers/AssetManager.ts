@@ -104,11 +104,11 @@ class AssetManager extends EventEmitter {
           // switch set side loaders for corresponding file type
           switch (fileType) {
             case EFileType.GLTF:
-              this._setGLTFSideLoaders(currentLoaderInstance);
+              this._setGLTFSideLoaders(currentLoaderInstance as GLTFLoader);
               break;
             case EFileType.KTX2:
               this._setKTX2LoaderDependencies(
-                currentLoaderInstance,
+                currentLoaderInstance as KTX2Loader,
                 this._renderer
               );
               break;
@@ -228,7 +228,9 @@ class AssetManager extends EventEmitter {
   private _getFileUrl(url: string): string {
     return url.indexOf("http://") === 0 || url.indexOf("https://") === 0
       ? url
-      : pathJoin(BASE_PATH, url);
+      : url.includes(BASE_PATH)
+      ? url
+      : "/" + pathJoin(BASE_PATH, url);
   }
 
   private _getFileId(fileData: IFile) {
