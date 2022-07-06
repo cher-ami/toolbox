@@ -3,10 +3,14 @@ import { ISceneConfig } from "./types";
 
 const sceneConfig: ISceneConfig = {
   assets3dBasePath: import.meta.env.BASE_URL,
+  renderer: {
+    antialias: true,
+  },
   sceneEnvBackground: {
     enabled: true,
     show: true,
-    color: 0xf1f2f3,
+    color: 0xefefef,
+    intensity: 1,
   },
   sceneFog: {
     enabled: true,
