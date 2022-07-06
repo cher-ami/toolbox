@@ -10,6 +10,7 @@ import {
   KernelSize,
 } from "postprocessing";
 
+// TODO: add to managers
 /**
  * post processing for the 3D scene
  * @class PostProcessing

@@ -1,8 +1,8 @@
 import css from "./ThreeScene.module.less";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import throttle from "lodash.throttle";
 import { IFile } from "./3D/managers/AssetManager";
-import SceneView from "./3D/SceneView";
+import { SceneView } from "./3D/SceneView";
 import debug from "@wbe/debug";
 
 interface IProps {
@@ -24,13 +24,14 @@ ThreeScene.defaultProps = {
  * @name ThreeScene
  */
 function ThreeScene(props: IProps) {
-  const rootRef = useRef<HTMLDivElement>();
+
 
   // --------------------------------------------------------------------------- 3D SCENE SETUP
 
   const webglContainerRef = React.useRef(null);
   const sceneViewRef = React.useRef<SceneView>(null);
 
+  // Scene is ready state
   const [sceneIsReady, _setSceneIsReady] = useState<boolean>(false);
   const sceneIsReadyRef = React.useRef(sceneIsReady);
   const setSceneIsReady = (is: boolean) => {
@@ -38,10 +39,9 @@ function ThreeScene(props: IProps) {
     _setSceneIsReady(is);
   };
 
-  // TODO: make a hook for the base requirements
-  //const [sceneView, isReady] = useThreeSceneView({container, assets})
-
+  // Async init scene with 3d assets
   useEffect(() => {
+    if (sceneViewRef.current) return;
     (async () => {
       try {
         // Prepare asset data for 3d asset loader
@@ -66,7 +66,7 @@ function ThreeScene(props: IProps) {
       setSceneIsReady(true);
       props.onSceneIsReady?.();
 
-      debug("Three Scene loaded");
+      log("Three Scene loaded");
     })().catch((err) => {
       console.error(err);
     });
@@ -80,10 +80,24 @@ function ThreeScene(props: IProps) {
   /**
    * Control pause scene from parent
    */
+
+  // create state ispaused from props
+  const [isPaused, setIsPaused] = useState<boolean>(props.isPaused);
+  const isPausedRef = React.useRef(isPaused);
+  const setIsPausedRef = (is: boolean) => {
+    isPausedRef.current = is;
+    setIsPaused(is);
+  };
+  // update isPaused from props
   useEffect(() => {
-    if (props.isPaused === null || !sceneViewRef.current) return;
-    sceneViewRef.current.paused = props.isPaused;
+    setIsPausedRef(props.isPaused);
   }, [props.isPaused]);
+
+  useEffect(() => {
+    if (isPaused === null || !sceneViewRef.current) return;
+    sceneViewRef.current.paused = isPaused;
+    window["isPaused"] = isPaused;
+  }, [isPaused]);
 
   // --------------------------------------------------------------------------- INPUT EVENTS
 
