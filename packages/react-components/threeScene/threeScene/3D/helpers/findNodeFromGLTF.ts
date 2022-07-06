@@ -1,5 +1,5 @@
-import { Mesh, Group, Object3D } from "three";
-import { GLTF } from "three/examples/jsm/loaders/GLTFLoader";
+import { Mesh, Group, Object3D } from "three"
+import { GLTF } from "three/examples/jsm/loaders/GLTFLoader"
 
 /**
  * Find inside a gltf scene object the node with the given name
@@ -13,12 +13,12 @@ export default function findNodeFromGLTF(
 ): Mesh | Group | Object3D {
   function findNode(name, array) {
     for (const node of array) {
-      if (node.name === name) return node;
+      if (node.name === name) return node
       if (node.children) {
-        const child = findNode(name, node.children);
-        if (child) return child;
+        const child = findNode(name, node.children)
+        if (child) return child
       }
     }
   }
-  return findNode(name, gltf?.scene?.children);
+  return findNode(name, gltf?.scene?.children)
 }
