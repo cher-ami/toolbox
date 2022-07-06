@@ -23,7 +23,7 @@ class SampleObject extends BaseSceneObject {
     this._isDebug = value;
   }
 
-  createMesh() {
+  createSubject() {
     this.geometry = new TorusKnotGeometry(0.75, 0.25, 100, 16);
 
     this.material = new MeshStandardMaterial({
@@ -33,10 +33,10 @@ class SampleObject extends BaseSceneObject {
       side: FrontSide,
     });
 
-    this.sceneObject = new Mesh(this.geometry, this.material);
-    
+    this.subject = new Mesh(this.geometry, this.material);
+
     this.name = componentName;
-    this.sceneObject.name = componentName + "_sceneObject";
+    this.subject.name = componentName + "_subject";
 
     // Set transforms
     this.scale.set(0.5, 0.5, 0.5);
@@ -46,8 +46,8 @@ class SampleObject extends BaseSceneObject {
   // Auto loop in loops
   loop(deltaTime: number) {
     super.loop(deltaTime);
-    this.sceneObject.rotation.x += 0.5 * deltaTime;
-    this.sceneObject.rotation.y += 0.5 * deltaTime;
+    this.subject.rotation.x += 0.5 * deltaTime;
+    this.subject.rotation.y += 0.5 * deltaTime;
   }
 }
 

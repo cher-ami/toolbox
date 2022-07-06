@@ -1,10 +1,11 @@
 import { Mesh, Group, BufferGeometry, Material, Object3D, Box3 } from "three";
+import EventEmitter from "events";
 
 const componentName = "BaseSceneObject";
 
 class BaseSceneObject extends Object3D {
-  sceneObject: Mesh<BufferGeometry, Material | Material[]> | Group;
-
+  subject: Mesh<BufferGeometry, Material | Material[]> | Group;
+  events: EventEmitter;
   geometry: BufferGeometry;
   material: any;
 
@@ -25,15 +26,51 @@ class BaseSceneObject extends Object3D {
     this._isPaused = value;
   }
 
-  constructor() {
-    super();
-    this.componentName = componentName;
-    this.createMesh();
-    this.add(this.sceneObject);
+  _isInteractive: boolean = false;
+  get isInteractive() {
+    return this._isInteractive;
+  }
+  set isInteractive(value) {
+    this._isInteractive = value;
   }
 
-  createMesh() {
-    this.sceneObject = new Mesh();
+  constructor(initiated: boolean = true) {
+    super();
+    this.componentName = componentName;
+    if (initiated) this.init();
+
+    this.events = new EventEmitter();
+    this.events.on("click", this.onClick.bind(this));
+  }
+
+  init() {
+    this.createSubject();
+    this.add(this.subject);
+  }
+
+  createSubject() {
+    this.subject = new Mesh();
+  }
+
+  onClick(event) {
+    console.log(event);
+  }
+
+  /**
+   * [findObjectByName find object3d in object's children by name]
+   */
+  public findObjectByName(name: string, parent: Object3D = null): Object3D {
+    let mesh: Object3D = null;
+    parent = parent || this.subject;
+
+    if (!parent) return;
+
+    parent.traverse((child: Object3D) => {
+      if (child.name === name) {
+        mesh = child;
+      }
+    });
+    return mesh;
   }
 
   // Auto loop in loops

@@ -9,27 +9,27 @@ const log = debug(`front:3D:${componentName}`);
 class SampleGltfObject extends BaseSceneObject {
   constructor() {
     super();
+    this._isInteractive = true;
   }
 
-  createMesh() {
+  createSubject() {
     // Get asset data from id
     const gltfData: GLTF = AssetManager.getAsset("model-test").data as GLTF;
 
-    this.sceneObject = gltfData.scene;
+    this.subject = gltfData.scene;
 
     // Set 3D
     this.name = componentName;
-    this.sceneObject.name = componentName + "_sceneObject";
+    this.subject.name = componentName + "_subject";
 
     // Set transforms
     this.position.set(0, 0, -3);
-    
   }
 
   // Auto loop in loops
   loop(deltaTime: number) {
     super.loop(deltaTime);
-    this.sceneObject.rotation.y += 0.5 * deltaTime;
+    this.subject.rotation.y += 0.5 * deltaTime;
   }
 }
 

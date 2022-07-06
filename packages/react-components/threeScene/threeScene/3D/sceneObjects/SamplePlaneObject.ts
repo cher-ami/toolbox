@@ -22,7 +22,7 @@ class SamplePlaneObject extends BaseSceneObject {
     super();
   }
 
-  createMesh() {
+  createSubject() {
     // PlaneGeometry UVs assume flipY=true, which compressed textures don't support.
     this.geometry = new PlaneGeometry();
     //this.geometry = this._flipY(new PlaneGeometry());
@@ -39,10 +39,10 @@ class SamplePlaneObject extends BaseSceneObject {
 
     this.material.needsUpdate = true;
 
-    this.sceneObject = new Mesh(this.geometry, this.material);
+    this.subject = new Mesh(this.geometry, this.material);
 
     this.name = componentName;
-    this.sceneObject.name = componentName + "_sceneObject";
+    this.subject.name = componentName + "_subject";
 
     // Set transforms
     this.position.set(-3, 0, 2);
@@ -51,8 +51,8 @@ class SamplePlaneObject extends BaseSceneObject {
   // Auto loop in loops
   loop(deltaTime: number) {
     super.loop(deltaTime);
-    this.sceneObject.rotation.x += 0.5 * deltaTime;
-    this.sceneObject.rotation.y += 0.5 * deltaTime;
+    this.subject.rotation.x += 0.5 * deltaTime;
+    this.subject.rotation.y += 0.5 * deltaTime;
   }
 
   /** Correct UVs to be compatible with `flipY=false` textures. */
