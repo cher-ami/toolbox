@@ -10,17 +10,14 @@ import {
   EquirectangularReflectionMapping,
   Texture,
   DirectionalLight,
-  Color,
   Intersection,
-  BufferGeometry,
-  Material,
-  MeshStandardMaterial,
 } from "three";
+import { gsap } from "gsap";
 import SceneBase from "./SceneBase";
 import AssetManager, { IFile } from "./managers/AssetManager";
 import isMobile from "./utils/isMobile";
 import { Pane } from "tweakpane";
-import SampleObject from "./sceneObjects/SampleObject";
+
 import debug from "@wbe/debug";
 import sceneConfig from "./data/sceneConfig";
 
@@ -32,20 +29,24 @@ import SampleGltfObject from "./sceneObjects/SampleGltfObject";
 import BaseSceneObject from "./sceneObjects/BaseSceneObject";
 import SamplePlaneObject from "./sceneObjects/SamplePlaneObject";
 import TransformControlManager from "./managers/TransformControlManager";
+import SampleObject from "./sceneObjects/SampleObject";
 
 const componentName = "SceneView";
 const log = debug(`front:3D:${componentName}`);
+let sceneViewInstanced: SceneView;
 
 class SceneView extends SceneBase {
+  sampleGltfObject: SampleGltfObject;
+
   protected _helpersGroup: Group;
   protected _pane;
   raycaster: Raycaster;
   canInteract: any;
   mouse: Vector2;
-  mainCameraControler: CameraManager;
+  mainCameraManager: CameraManager;
   private _transformControlHelper: TransformControlManager;
-  private _mainObjectsGroup: Group;
   _intersectObject: any;
+  private _mainObjectsGroup: Group;
 
   /**
    * [constructor description]
@@ -58,6 +59,8 @@ class SceneView extends SceneBase {
 
     //  TODO: add exemple for raycaster
     this.raycaster = new Raycaster();
+
+    sceneViewInstanced = this;
   }
 
   /**
@@ -91,13 +94,16 @@ class SceneView extends SceneBase {
     this._onSceneReady();
 
     if (sceneConfig.debug.hasGui) this._initPane();
+
+    this._prepare();
+    this._listen();
   }
 
   /**
    * Setup camera controls
    */
   private _setupCameraControls() {
-    this.mainCameraControler = new CameraManager(
+    this.mainCameraManager = new CameraManager(
       this.camera,
       this.renderer.domElement,
       sceneConfig.mainCamera.controlMode
@@ -108,13 +114,14 @@ class SceneView extends SceneBase {
    * Setup scene env map
    */
   _setupEnvMap(hasBackground: boolean = false) {
+    if (!this._scene) return;
     // Setup env map
     const envHdr: Texture = AssetManager.getAsset("envmap").data as Texture;
     envHdr.mapping = EquirectangularReflectionMapping;
 
     // setup env on scene
     this._scene.environment = envHdr;
-    this._scene.background = hasBackground ? envHdr : null; // to debug envmap
+    this._scene.background = hasBackground ? envHdr : this._backgroundColor; // to debug envmap
   }
 
   _setupMainCamera() {
@@ -183,7 +190,9 @@ class SceneView extends SceneBase {
       camera: this._cameraDebug,
       cameraControls: this._cameraDebugControls,
       rendererDomContainer: this._domContainer,
-      transformableObjects: this._mainObjectsGroup.children,
+      transformableObjects: this._mainObjectsGroup.children.map((sceneObject) =>
+        sceneObject["subject"] ? sceneObject["subject"] : sceneObject
+      ),
     });
 
     // Helper group objects
@@ -231,14 +240,14 @@ class SceneView extends SceneBase {
 
     if (intersects && intersects.length > 0) {
     }
-    this._exampleHoverObjects(intersects);
+    this._hoverSceneObjects(intersects);
   }
 
   onClick(event) {
     this._raycastSceneObjects();
 
     if (this._intersectObject) {
-      this._exampleClickObject(this._intersectObject);
+      this._clickSceneObject(this._intersectObject);
     }
   }
 
@@ -253,10 +262,25 @@ class SceneView extends SceneBase {
 
     // calculate objects intersecting the picking ray
     // NOTE : can be any objects in scene, more performant than raycast on all objects
+    // const interactiveObjects = [
+    //   ...this.roomsGroup.children,
+    // ].reduce((prevChild, currentChild, currentIndex, childs) => {
+    //   const sceneObject = currentChild as BaseSceneObject
+    //   if (sceneObject["subject"] && sceneObject.isInteractive) {
+    //     prevChild.push(sceneObject.subject)
+    //   }
+    //   return prevChild
+    // }, [] as Object3D[])
+
+    const interactiveObjects = [] as Object3D[];
+    this._mainObjectsGroup.traverse((child) => {
+      if ((child as BaseSceneObject).isInteractive) {
+        interactiveObjects.push(child);
+      }
+    });
+
     const intersects = this.raycaster.intersectObjects(
-      this._mainObjectsGroup.children.map((child) =>
-        child["sceneObject"] ? child["sceneObject"] : (null as Object3D)
-      ),
+      interactiveObjects,
       true
     );
 
@@ -266,9 +290,7 @@ class SceneView extends SceneBase {
   // SAMPLE INTERACTIVE OBJECT METHODS //
   // NOTE : methods for demo, remove this when you have your own interaction logic
 
-  private _exampleHoverObjects(
-    intersects: Array<Intersection<Object3D>>
-  ): void {
+  private _hoverSceneObjects(intersects: Array<Intersection<Object3D>>): void {
     if (intersects && intersects.length > 0) {
       if (this._intersectObject != intersects[0].object) {
         if (this._intersectObject)
@@ -291,22 +313,36 @@ class SceneView extends SceneBase {
     }
   }
 
-  private _exampleClickObject(clickedObject: any): void {
-    function getParentSceneObject(sceneObject: Object3D): Object3D {
-      if (sceneObject.parent) {
-        if (sceneObject.parent.name.includes("sceneObject")) {
-          return sceneObject.parent;
+  private _getInteractiveObject(sceneObject: any): BaseSceneObject {
+    let target = sceneObject;
+    if (!(sceneObject as BaseSceneObject).isInteractive) {
+      sceneObject.traverseAncestors((object) => {
+        if (object.isInteractive && !target.isInteractive) {
+          target = object;
         }
-        return getParentSceneObject(sceneObject.parent);
-      }
+      });
     }
-    // get the object intersected
-    const sceneObject = clickedObject.name.includes("sceneObject")
-      ? clickedObject
-      : getParentSceneObject(clickedObject);
 
-    alert(`Clicked on ${sceneObject.name}`);
+    return target;
+  }
+
+  private _clickSceneObject(clickedObject: any): void {
+    const sceneObject = this._getInteractiveObject(clickedObject);
+    sceneObject.events.emit("click");
+
     clickedObject.material.emissive.setHex(clickedObject.currentHex);
+  }
+
+  _getObject(name: string): BaseSceneObject {
+    let target = null;
+
+    this._mainObjectsGroup.traverse((object) => {
+      if (object.name === name) {
+        target = object;
+      }
+    });
+
+    return target;
   }
 
   // --------------------------------------------------------------------------------  LOOP & RENDER
@@ -314,13 +350,14 @@ class SceneView extends SceneBase {
   /**
    * scene view loop
    */
-  public loop(deltaTime?: number): void {
-    super.loop(deltaTime);
+  public loop(elapsedTime?: number): boolean {
+    const isLooping = super.loop(elapsedTime);
+    if (!isLooping) return false;
 
     // NOTE: remove if you don't need to have interactive camera
     // Update camera controls
-    if (sceneConfig.mainCamera.isControlable && this.mainCameraControler) {
-      this.mainCameraControler.loop(deltaTime);
+    if (sceneConfig.mainCamera.isControlable && this.mainCameraManager) {
+      this.mainCameraManager.loop(this._deltaTime);
     }
 
     // NOTE : Add your loops here
@@ -337,6 +374,8 @@ class SceneView extends SceneBase {
     this.render();
 
     this.performance.end();
+
+    return true;
   }
 
   // --------------------------------------------------------------------------------  DISPOSE
@@ -347,7 +386,7 @@ class SceneView extends SceneBase {
   public destroy(): void {
     super.destroy();
     // Dispose camera controls
-    if (this.mainCameraControler) this.mainCameraControler.dispose();
+    if (this.mainCameraManager) this.mainCameraManager.dispose();
     // Dispose transform controler
     if (this._transformControlHelper) this._transformControlHelper.dispose();
     // Dispose the pane
@@ -360,13 +399,14 @@ class SceneView extends SceneBase {
     super._setDebugMode(isDebug);
 
     // camera main controler
-    if (this.mainCameraControler) this.mainCameraControler.enabled = !isDebug;
+    if (this.mainCameraManager) this.mainCameraManager.enabled = !isDebug;
 
     // debug transform objects controler
     if (this._transformControlHelper)
       this._transformControlHelper.enabled = isDebug;
   }
 
+  // TODO: move outside ?
   /**
    * Init debug panel
    * @returns void
@@ -401,7 +441,7 @@ class SceneView extends SceneBase {
           firstPerson: "firstPerson",
         },
       }).on("change", (ev) => {
-        this.mainCameraControler.setMode(ev.value);
+        this.mainCameraManager.setMode(ev.value);
       });
     }
     f1.addInput(paneDefaultParams, "Activate debug");
@@ -443,7 +483,10 @@ class SceneView extends SceneBase {
       });
 
       this._transformControlHelper.controls.addEventListener("change", () => {
-        if (!this._transformControlHelper.transformControlMesh || !this._transformControlHelper.controls.object) {
+        if (
+          !this._transformControlHelper.transformControlMesh ||
+          !this._transformControlHelper.controls.object
+        ) {
           f2.hidden = true;
           return;
         }
@@ -476,7 +519,6 @@ class SceneView extends SceneBase {
         objectTransforms.name =
           this._transformControlHelper.transformControlMesh.name;
 
-
         // refresh pane
         this._pane.refresh();
       });
@@ -486,4 +528,4 @@ class SceneView extends SceneBase {
   }
 }
 
-export default SceneView;
+export { SceneView, sceneViewInstanced };
