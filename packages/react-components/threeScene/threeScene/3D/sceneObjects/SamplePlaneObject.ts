@@ -1,13 +1,8 @@
 import {
-  MeshStandardMaterial,
   Mesh,
-  TorusKnotGeometry,
   PlaneGeometry,
-  MeshBasicMaterial,
   DoubleSide,
   Texture,
-  LinearFilter,
-  MeshPhongMaterial,
   MeshLambertMaterial,
 } from "three";
 import BaseSceneObject from "./BaseSceneObject";
@@ -20,6 +15,7 @@ const log = debug(`front:3D:${componentName}`);
 class SamplePlaneObject extends BaseSceneObject {
   constructor() {
     super();
+    this._isInteractive = true;
   }
 
   createSubject() {

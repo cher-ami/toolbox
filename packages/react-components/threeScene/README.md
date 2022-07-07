@@ -4,8 +4,8 @@ A react component for instanciating a base [Three.js](https://threejs.org/) scen
 
 - Basic postprocessing (disabled by default)
 - An assetmanager to load 3d assets with corresponding loaders :
- - Gltf support meshoptimise extension and draco
- - Basis texture support (.ktx2)
+- Gltf support meshoptimise extension and draco
+- Basis texture support (.ktx2)
 - [Scene objects architecture](./3D/sceneObjects/) with "in-object" controls :
 - Debug mode with camera orbit control
 - Gui with [tweakpane](https://www.npmjs.com/package/tweakpane)
@@ -62,7 +62,7 @@ import frag from "./test.frag?raw";
 - [camera-controls](https://www.npmjs.com/package/camera-controls)
 
 Install all dependencies :
-`npm i three @types/three0.140 lodash.throttle events camera-controls postprocessing tweakpane @tweakpane/core @wbe/debug`
+`npm i three@0.140.2 @types/three0.140 lodash.throttle events camera-controls postprocessing@6.26.4 tweakpane @tweakpane/core @wbe/debug`
 
 ## props
 

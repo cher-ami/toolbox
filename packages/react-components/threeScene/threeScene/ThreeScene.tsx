@@ -24,8 +24,6 @@ ThreeScene.defaultProps = {
  * @name ThreeScene
  */
 function ThreeScene(props: IProps) {
-
-
   // --------------------------------------------------------------------------- 3D SCENE SETUP
 
   const webglContainerRef = React.useRef(null);
@@ -50,7 +48,7 @@ function ThreeScene(props: IProps) {
         // Instanciate new scene view
         sceneViewRef.current = new SceneView();
 
-        // init scene view
+        // init scene view with await to wait for assets to be loaded and scene to be ready
         await sceneViewRef.current.init({
           domContainer: webglContainerRef.current,
           assetsData,
@@ -61,7 +59,7 @@ function ThreeScene(props: IProps) {
         console.error(error);
       }
 
-      // Start loop on assets and scene ready
+      // After scene ready start loop on assets and set is ready state
       sceneViewRef.current.loop();
       setSceneIsReady(true);
       props.onSceneIsReady?.();
@@ -96,7 +94,6 @@ function ThreeScene(props: IProps) {
   useEffect(() => {
     if (isPaused === null || !sceneViewRef.current) return;
     sceneViewRef.current.paused = isPaused;
-    window["isPaused"] = isPaused;
   }, [isPaused]);
 
   // --------------------------------------------------------------------------- INPUT EVENTS

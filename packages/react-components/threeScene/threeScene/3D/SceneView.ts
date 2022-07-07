@@ -12,7 +12,6 @@ import {
   DirectionalLight,
   Intersection,
 } from "three";
-import { gsap } from "gsap";
 import SceneBase from "./SceneBase";
 import AssetManager, { IFile } from "./managers/AssetManager";
 import isMobile from "./utils/isMobile";
@@ -96,7 +95,6 @@ class SceneView extends SceneBase {
     if (sceneConfig.debug.hasGui) this._initPane();
 
     this._prepare();
-    this._listen();
   }
 
   /**

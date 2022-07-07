@@ -16,6 +16,7 @@ class SampleObject extends BaseSceneObject {
 
   constructor() {
     super();
+    this._isInteractive = true;
   }
 
   set isDebug(value: boolean) {
