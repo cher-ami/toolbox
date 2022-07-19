@@ -37,12 +37,11 @@ If a tool or component can be customized only via parameters, it should not have
 ### react-hooks
 
 - [use-is-handheld-and-landscape](packages/react-hooks/use-is-handheld-and-landscape)
-- [rooks](https://react-hooks.org/) ↗ (React hooks collection) 
+- [rooks](https://react-hooks.org/) ↗ (React hooks collection)
 
 ### react-routing
 
 - [@cher-ami/router](https://github.com/cher-ami/router) ↗
-
 
 ### managers
 
@@ -54,7 +53,10 @@ If a tool or component can be customized only via parameters, it should not have
 
 ### utils
 
-- [shareUrls](packages/social/shareUrls.ts)
+- [shareUrls](packages/utils/shareUrls.ts)
+- [math](packages/utils/math.ts)
+- [array](packages/utils/math.ts)
+- [string](packages/utils/math.ts)
 - [@wbe/lazy-image](https://github.com/willybrauner/lazy-image) ↗
 - [@wbe/debug](https://github.com/willybrauner/debug) ↗
 - [@wbe/deferred-promise](https://github.com/willybrauner/deferred-promise) ↗
