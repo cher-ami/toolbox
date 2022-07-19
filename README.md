@@ -58,7 +58,7 @@ If a tool or component can be customized only via parameters, it should not have
 - [@wbe/lazy-image](https://github.com/willybrauner/lazy-image) ↗
 - [@wbe/debug](https://github.com/willybrauner/debug) ↗
 - [@wbe/deferred-promise](https://github.com/willybrauner/deferred-promise) ↗
-- [@solid-js/signal](https://github.com/solid-js/solid/tree/master/libraries/iso-signal) ↗
+- [@zouloux/signal](https://github.com/zouloux/signal) ↗
 - [splitting](https://splitting.js.org/) ↗ (split text)
 
 ## Credits
