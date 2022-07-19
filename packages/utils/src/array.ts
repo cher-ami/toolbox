@@ -1,5 +1,6 @@
 /**
  * Shuffle items of array
+ * Not create a new array, return the same reference but shuffled
  * https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
  * @param array
  */
