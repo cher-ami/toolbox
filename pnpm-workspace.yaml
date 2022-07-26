@@ -1,0 +1,4 @@
+packages:
+  - "packages/managers/*"
+  - "packages/react-components/*"
+  - "packages/react-hooks/*"

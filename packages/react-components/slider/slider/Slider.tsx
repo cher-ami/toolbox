@@ -1,64 +1,57 @@
-import css from "./Slider.module.less";
-import React, { ReactNode, useRef, useState } from "react";
-import { useWindowSize } from "@wbe/use-window-size";
-import { useDrag } from "react-use-gesture";
-import { gsap } from "gsap";
-import { scrollLockService } from "./helpers/scrollLockService";
-import { merge } from "./helpers/merge";
+import css from "./Slider.module.less"
+import React, { ReactNode, useRef, useState } from "react"
+import { useWindowSize } from "@wbe/use-window-size"
+import { useDrag } from "@use-gesture/react"
+import { gsap } from "gsap"
+import { scrollLockService } from "./helpers/scrollLockService"
+import { merge } from "./helpers/merge"
 
 interface IProps {
-  className?: string;
-  children: ReactNode[];
+  className?: string
+  children: ReactNode[]
 }
 
 /**
  * @name Slider
  */
 function Slider(props: IProps) {
-  const rootRef = useRef(null);
-  const wrapperRef = useRef(null);
-  const windowSize = useWindowSize();
-  const isMobile = window.innerWidth < 768;
+  const rootRef = useRef(null)
+  const wrapperRef = useRef(null)
+  const windowSize = useWindowSize()
+  const isMobile = window.innerWidth < 768
 
-  const [isScrolling, setIsScrolling] = useState(false);
-  const [preventLink, setPreventLink] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false)
+  const [preventLink, setPreventLink] = useState(false)
 
   /**
    * Wheel Drag handlder
    */
-  const scrollXRef = useRef<number>(0);
-  const lastScrollX = useRef<number>(0);
+  const scrollXRef = useRef<number>(0)
+  const lastScrollX = useRef<number>(0)
   const drag = useDrag(
     (e) => {
-      scrollLockService[e.active ? "lock" : "unlock"]();
-      setIsScrolling(e.active);
+      scrollLockService[e.active ? "lock" : "unlock"]()
+      setIsScrolling(e.active)
 
       // manage prevent link state for children
-      e.active
-        ? setPreventLink(true)
-        : setTimeout(() => setPreventLink(false), 100);
+      e.active ? setPreventLink(true) : setTimeout(() => setPreventLink(false), 100)
 
-      const deltaX = e.delta[0] * (e.velocity * (isMobile ? 5 : 1));
-      const elRect = wrapperRef.current.getBoundingClientRect();
+      const deltaX = e.delta[0] * (e.velocity[0] * (isMobile ? 5 : 1))
+      const elRect = wrapperRef.current.getBoundingClientRect()
 
       // itemMargin depend of your slider
-      const itemMargin = 70;
-      const maxScroll = elRect.width - windowSize.width + itemMargin;
+      const itemMargin = 70
+      const maxScroll = elRect.width - windowSize.width + itemMargin
 
-      scrollXRef.current = Math.max(
-        0,
-        Math.min(scrollXRef.current - deltaX, maxScroll)
-      );
+      scrollXRef.current = Math.max(0, Math.min(scrollXRef.current - deltaX, maxScroll))
 
       const isScrollingInsideMinAndMax =
-        scrollXRef.current > 0 && scrollXRef.current < maxScroll;
+        scrollXRef.current > 0 && scrollXRef.current < maxScroll
 
       const skewX =
-        e.active && isScrollingInsideMinAndMax
-          ? Math.round(e.velocity * 1.5)
-          : 0;
+        e.active && isScrollingInsideMinAndMax ? Math.round(e.velocity[0] * 1.5) : 0
 
-      gsap.killTweensOf(wrapperRef.current);
+      gsap.killTweensOf(wrapperRef.current)
       gsap.to(wrapperRef.current, {
         x: -scrollXRef.current,
         duration: 0.7,
@@ -71,25 +64,21 @@ function Slider(props: IProps) {
             detail: {
               x: -scrollXRef.current,
             },
-          });
-          window.dispatchEvent(sliderEvent);
+          })
+          window.dispatchEvent(sliderEvent)
         },
-      });
+      })
 
       if (isScrollingInsideMinAndMax) {
-        lastScrollX.current = scrollXRef.current;
+        lastScrollX.current = scrollXRef.current
       }
     },
     { axis: "x" }
-  );
+  )
 
   return (
     <div
-      className={merge([
-        css.root,
-        props.className,
-        isScrolling && css.root_isScrolling,
-      ])}
+      className={merge([css.root, props.className, isScrolling && css.root_isScrolling])}
       {...drag()}
       ref={rootRef}
     >
@@ -100,11 +89,11 @@ function Slider(props: IProps) {
         {React.Children.map(props.children, (child: any) => {
           return React.cloneElement(child, {
             preventLink,
-          });
+          })
         })}
       </div>
     </div>
-  );
+  )
 }
 
-export default Slider;
+export default Slider

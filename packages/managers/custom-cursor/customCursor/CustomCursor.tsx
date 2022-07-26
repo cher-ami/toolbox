@@ -1,7 +1,7 @@
-import css from "./CustomCursor.module.less";
-import React, { useEffect, useRef, useState } from "react";
-import CustomCursorManager, { TCursorState } from "./CustomCursorManager";
-import { isHandeldDevice } from "./helpers/isHandeldDevice";
+import css from "./CustomCursor.module.less"
+import React, { useEffect, useRef, useState } from "react"
+import CustomCursorManager, { TCursorState } from "./CustomCursorManager"
+import { isHandheldDevice } from "@cher-ami/utils"
 
 interface IProps {
   /**
@@ -9,58 +9,60 @@ interface IProps {
    * Type: string
    * Default: ""
    */
-  className?: string;
+  className?: string
 }
 
 /**
  * @name CustomCursor
  */
 function CustomCursor(props: IProps) {
-  const rootRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null)
 
   /**
    * Listen cursorState
    */
-  const [cursorType, setCursorType] = useState<TCursorState>(CustomCursorManager.defaultType);
+  const [cursorType, setCursorType] = useState<TCursorState>(
+    CustomCursorManager.defaultType
+  )
   useEffect(() => {
     const handleCursorType = async (pCursorType: TCursorState): Promise<void> => {
-      setCursorType(pCursorType);
-    };
-    return CustomCursorManager.cursorState.on(handleCursorType);
-  }, []);
+      setCursorType(pCursorType)
+    }
+    return CustomCursorManager.cursorState.add(handleCursorType)
+  }, [])
 
   /**
    * Changing styles according to the cursorState
    */
   useEffect(() => {
     if (cursorType === "default") {
-      rootRef.current.style.opacity = "1";
+      rootRef.current.style.opacity = "1"
     } else if (cursorType === "hidden") {
-      rootRef.current.style.opacity = "0";
+      rootRef.current.style.opacity = "0"
     }
-  }, [cursorType]);
+  }, [cursorType])
 
   /**
    * Start mouse movement
    */
   useEffect(() => {
-    CustomCursorManager.start(rootRef.current);
+    CustomCursorManager.start(rootRef.current)
     return () => {
-      CustomCursorManager.stop();
-    };
-  }, []);
+      CustomCursorManager.stop()
+    }
+  }, [])
 
   // ----------------------------------------------------------------------------- RENDER
 
-  if (isHandeldDevice) {
-    return <div />;
+  if (isHandheldDevice) {
+    return <div />
   }
 
   return (
     <div className={[css.root, props.className].filter((v) => v).join(" ")} ref={rootRef}>
       Custom Cursor
     </div>
-  );
+  )
 }
 
-export default CustomCursor;
+export default CustomCursor
