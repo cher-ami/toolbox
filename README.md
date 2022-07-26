@@ -1,7 +1,5 @@
 # cher-ami toolbox
 
-[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
-
 Local and external tools collection for cher-ami projects.
 
 This README contains two types of tools:
