@@ -1,4 +1,4 @@
-# cher-ami toolbox
+# 🛠 cher-ami toolbox
 
 Local and external tools collection for cher-ami projects.
 
