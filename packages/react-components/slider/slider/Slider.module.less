@@ -4,6 +4,7 @@
   cursor: grabbing;
   overflow: hidden;
   width: 100%;
+  touch-action: none;
 }
 
 .wrapper {
@@ -16,7 +17,7 @@
   align-items: flex-start;
 
   // prevent vertical scrolling when touch
-  touch-action: pan-y;
+  touch-action: none;
   cursor: grab;
   &:active {
     cursor: grabbing;

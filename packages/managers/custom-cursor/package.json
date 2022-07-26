@@ -10,6 +10,6 @@
   "author": "cher-ami",
   "license": "MIT",
   "dependencies": {
-    "@solid-js/signal": "^1.0.0-beta.1"
+    "@solid-js/signal": "^1.0.3"
   }
 }
