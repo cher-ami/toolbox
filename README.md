@@ -25,7 +25,7 @@ If a tool or component can be customized only via parameters, it should not have
 - [marquee](packages/react-components/marquee)
 - [slider](packages/react-components/slider)
 - [@wbe/lazy-image](https://github.com/willybrauner/lazy-image) ↗
-- [@wbe/react-video](https://github.com/willybrauner/react-libraries/tree/main/packages/react-components/react-video) ↗
+- [@wbe/react-video](https://github.com/willybrauner/react-libraries/tree/main/packages/react-components/react-video-player) ↗
 - [@wbe/react-transition](https://github.com/willybrauner/react-libraries/tree/main/packages/react-components/react-transition) ↗
 
 ### react-hooks
