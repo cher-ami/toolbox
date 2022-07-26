@@ -14,6 +14,11 @@ If a tool or component can be customized only via parameters, it should not have
 
 ## Summary
 
+### boilerplate
+
+- [chersite](https://github.com/cher-ami/chersite) ↗
+- [cherthree](https://github.com/cher-ami/cherthree) ↗
+
 ### react-components
 
 - [cookies-banner](packages/react-components/cookies-banner)
