@@ -42,7 +42,6 @@ If a tool or component can be customized only via parameters, it should not have
 - [custom-cursor](packages/managers/custom-cursor)
 - [sprite-animator](packages/managers/sprite-animator)
 - [@cher-ami/transitions-manager](https://github.com/cher-ami/transitions-manager) ↗
-- [@cher-ami/smooth-scroll](https://github.com/cher-ami/smooth-scroll) ↗
 - [@cher-ami/audio-manager](https://github.com/cher-ami/audio-manager) ↗
 
 ### utils
