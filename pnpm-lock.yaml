@@ -29,9 +29,11 @@ importers:
 
   packages/managers/custom-cursor:
     specifiers:
-      '@solid-js/signal': ^1.0.3
+      '@cher-ami/utils': ^0.1.0
+      '@zouloux/signal': ^0.2.4
     dependencies:
-      '@solid-js/signal': 1.0.3
+      '@cher-ami/utils': 0.1.0
+      '@zouloux/signal': 0.2.4
 
   packages/managers/sprite-animator:
     specifiers: {}
@@ -393,11 +395,6 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.14
     dev: true
 
-  /@solid-js/signal/1.0.3:
-    resolution: {integrity: sha512-IVPWWAZtWZdw36IepVu1CdhEa8VECjlg8lcmebDptDYr/FYCAJcWXWc9JJ9U6d/qEBFY+yuQvHE6Mj9veCRsrQ==}
-    deprecated: Please use @zouloux/signal now
-    dev: false
-
   /@types/node/18.6.1:
     resolution: {integrity: sha512-z+2vB6yDt1fNwKOeGbckpmirO+VBDuQqecXkgeIqDlaOtmKn6hPR/viQ8cxCfqLU4fTlvM3+YjM367TukWdxpg==}
     dev: true
@@ -465,6 +462,10 @@ packages:
       react: ^17.0.2
     dependencies:
       react: 18.2.0
+    dev: false
+
+  /@zouloux/signal/0.2.4:
+    resolution: {integrity: sha512-5xwTaZ4p1+fnvB1MHhWGpenDs5MMU2hjFyt6hveBISRIu5jTU6NxKTIz6PQbSeTdZvMTyOehjHbLbB3YFb9zyA==}
     dev: false
 
   /ansi-styles/3.2.1:

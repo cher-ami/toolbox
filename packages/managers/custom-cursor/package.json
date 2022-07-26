@@ -10,6 +10,7 @@
   "author": "cher-ami",
   "license": "MIT",
   "dependencies": {
-    "@solid-js/signal": "^1.0.3"
+    "@cher-ami/utils": "^0.1.0",
+    "@zouloux/signal": "^0.2.4"
   }
 }
