@@ -1,9 +1,5 @@
 import { useEffect, useState } from "react"
-
-const isHandheldDevice =
-  /(tablet|ipad|playbook|silk)|(android(?!.*mobi))|Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/i.test(
-    navigator.userAgent
-  )
+import { isHandheldDevice } from "@cher-ami/utils"
 
 /**
  * useIsHandheldAndLandscape
