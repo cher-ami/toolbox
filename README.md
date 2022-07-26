@@ -12,15 +12,6 @@ This README contains two types of tools:
 Because some tools need to be re-handled according to use, without that we want to re-develop them from scratch.
 If a tool or component can be customized only via parameters, it should not have its place in this repository but become an independent library.
 
-## How to contribute to this repos?
-
-- Copy/past the [\_template](template) folder in the corresponding folder of your tool
-- Add name and description in package.json / README.md
-- Add your tool in src
-- Create an example in "\_example" folder if needed. A vitejs project is setup in each package, ready to be.
-- If you create a new folder in [packages](packages) folder, add it in the [lerna.json](lerna.json) file.
-- Add the new tool in main [README.md](README.md) file.
-
 ## Summary
 
 ### react-components
@@ -58,6 +49,22 @@ If a tool or component can be customized only via parameters, it should not have
 - [@wbe/deferred-promise](https://github.com/willybrauner/deferred-promise) ↗
 - [@zouloux/signal](https://github.com/zouloux/signal) ↗
 - [splitting](https://splitting.js.org/) ↗ (split text)
+
+## How to contribute to this repos?
+
+- Copy/past the [\_template](template) folder in the corresponding folder of your tool
+- Add name and description in package.json / README.md
+- Add your tool in src
+- Create an example in "\_example" folder if needed. A vitejs project is setup in each package, ready to be.
+- Add the new tool in main [README.md](README.md) file.
+
+## Development
+
+This repository use pnpm to manage dependencies.
+
+```shell
+pnpm install
+```
 
 ## Credits
 

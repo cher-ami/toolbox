@@ -1,5 +1,7 @@
 {
   "name": "toolbox",
+  "version": "1.0.0",
+  "author": "cher-ami",
   "private": true,
   "dependencies": {
     "react": "^18.2.0",
@@ -14,6 +16,5 @@
     "prettier": "^2.7.1",
     "typescript": "^4.7.4",
     "vite": "^3.0.3"
-  },
-  "version": "1.0.0"
+  }
 }
